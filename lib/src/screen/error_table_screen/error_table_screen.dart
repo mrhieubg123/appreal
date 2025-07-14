@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../widget/drop_down_button.dart';
+import 'widget/drop_down_button.dart';
 
 class ErrorStableScreen extends StatelessWidget {
   const ErrorStableScreen({super.key});

@@ -1,3 +1,5 @@
+import 'package:my_app/src/screen/login_screen/login_screen.dart';
+
 import 'src/screen/machine_status_screen/machine_status_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -27,7 +29,8 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        home: const MyHomePage(title: 'Flutter Demo Home Page'),
+        // home: const MachineStatusApp(),
+        home: const LoginScreen(),
       ),
     );
   }

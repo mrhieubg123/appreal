@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:my_app/main.dart';
 
 import '../../../../core/model/machine_status_model.dart';
 import '../../machine_detail_screen/machine_detsail_screen.dart';
@@ -204,8 +205,12 @@ class MachineStatusTable extends StatelessWidget {
                                   ? Center(
                                       child: buildLight(
                                         radius: 16.r,
-                                        onTap: () =>
-                                            goToMachineDetailScreen(context),
+                                        onTap: () => goToMachineDetailScreen(
+                                          getMachineFromLineLocation(
+                                            lineNames[lineIndex],
+                                            columnNames[index],
+                                          ),
+                                        ),
                                         color: getColorFromLineLocation(
                                           lineNames[lineIndex],
                                           columnNames[index],
@@ -235,11 +240,12 @@ class MachineStatusTable extends StatelessWidget {
     );
   }
 
-  goToMachineDetailScreen(context) {
+  goToMachineDetailScreen(machine) {
     Navigator.push(
-      context,
+      navigatorKey.currentContext!,
       MaterialPageRoute(
-        builder: (BuildContext context) => MachineDetailScreen(),
+        builder: (BuildContext context) =>
+            MachineDetailScreen(machine: machine),
       ),
     );
   }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../core/widget/dialog.dart';
-import '../../../main.dart';
+import '../../../../core/widget/dialog.dart';
+import '../../../../main.dart';
 
 class DropDownButton extends StatefulWidget {
   const DropDownButton({super.key});
