@@ -188,8 +188,23 @@ class ErrorStableScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar:true,
-      appBar: AppBar(backgroundColor: Colors.transparent),
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        centerTitle: true,
+        leading: InkWell(
+            onTap : ()=> Navigator.pop(context),
+          child: Icon(Icons.arrow_back, size: 64.h, color: Colors.white)),
+        title: Text(
+          "Danh sách lỗi",
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 48.sp,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+      ),
       body: Container(
         height: double.infinity,
         decoration: BoxDecoration(
@@ -203,36 +218,11 @@ class ErrorStableScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: kToolbarHeight + 16.h),
-              Row(
-                // crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  InkWell(
-                    onTap: () => Navigator.pop(context),
-                    child: Icon(
-                      Icons.arrow_back,
-                      size: 64.h,
-                      color: Colors.white,
-                    ),
-                  ),
-                  Expanded(
-                    child: Text(
-                      "Danh sách lỗi",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 48.sp,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 32.h),
+              SizedBox(height: kToolbarHeight + 120.h),
               Text(
                 "Tổng số lỗi: 20",
                 style: TextStyle(
-                  fontSize: 36.sp,
+                  fontSize: 40.sp,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),
