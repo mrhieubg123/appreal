@@ -2,13 +2,20 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../core/model/error_detail_model.dart';
 import '../../../../core/model/machine_status_model.dart';
 import '../../machine_detail_screen/machine_detsail_screen.dart';
 import 'drop_down_button_cause.dart';
 
 class ErrorDetailWidget extends StatelessWidget {
-  ErrorDetailWidget({super.key, required this.machines});
-
+  ErrorDetailWidget({
+    super.key,
+    required this.machines,
+    this.errorDetailsModel,
+    required this.indexFilter,
+  });
+  ErrorDetailsModel? errorDetailsModel;
+  int indexFilter;
   List<MachineStatusModel> machines = [];
 
   @override
@@ -38,17 +45,22 @@ class ErrorDetailWidget extends StatelessWidget {
               Container(
                 width: 40.w,
                 height: 40.w,
-                decoration: BoxDecoration(color: Colors.green, shape: BoxShape.circle),
+                decoration: BoxDecoration(
+                  color: Colors.green,
+                  shape: BoxShape.circle,
+                ),
               ),
               SizedBox(width: 24.w),
-              Text("Tần suất",style: TextStyle(fontSize: 32.sp)),
+              Text("Tần suất", style: TextStyle(fontSize: 32.sp)),
             ],
           ),
           SizedBox(height: 32.h),
-          DropDownButtonCause(),
-          DropDownButtonCause(),
-          DropDownButtonCause(),
-          DropDownButtonCause(),
+          ...List.generate(errorDetailsModel?.listCause?.length ?? 0, (index) {
+            return DropDownButtonCause(
+              cause: errorDetailsModel!.listCause![index],
+              indexFilter: indexFilter,
+            );
+          }),
         ],
       ),
     );

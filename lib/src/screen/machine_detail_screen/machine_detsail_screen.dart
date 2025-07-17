@@ -1,8 +1,11 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../../core/model/error_detail_model.dart';
+import '../../../core/model/error_stats_model.dart';
 import '../../../core/model/machine_status_model.dart';
 import '../../data_mau/constants.dart';
+import '../machine_status_screen/machine_status_getdata.dart';
 import 'widget/error_detail_widget.dart';
 
 class MachineDetailScreen extends StatefulWidget {
@@ -15,11 +18,42 @@ class MachineDetailScreen extends StatefulWidget {
 
 class _MachineDetailScreenState extends State<MachineDetailScreen> {
   int indexFilter = 0;
+  ErrorDetailsModel? errorDetailsModel;
+  ErrorStatsModel? errorStatsModel;
+  @override
+  void initState() {
+    getData();
+    super.initState();
+  }
+
+  double errorPercent = 25; // 25% lỗi
+  double otherPercent = 75; // 75% OK
+
+  getData() async {
+    if (widget.machine.error_code != null) {
+      errorDetailsModel = await MachineStatusGetData().getListErrorDetail(
+        errorCode: widget.machine.error_code!,
+      );
+      errorStatsModel = await MachineStatusGetData().getErrorStatsModel(
+        errorCode: widget.machine.error_code!,
+      );
+      setState(() {
+        errorPercent =
+            ((errorStatsModel?.errorCodeErrorsLast7Days ?? 0) /
+                    ((errorStatsModel?.totalErrorsLast7Days == null ||
+                            errorStatsModel?.totalErrorsLast7Days == 0)
+                        ? 1
+                        : errorStatsModel!.totalErrorsLast7Days!) *
+                    100)
+                .round()
+                .toDouble();
+        otherPercent = 100 - errorPercent;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final double errorPercent = 25; // 25% lỗi
-    final double okPercent = 75; // 75% OK
-
     return Scaffold(
       appBar: AppBar(
         title: const Text("Thông tin máy móc"),
@@ -32,33 +66,55 @@ class _MachineDetailScreenState extends State<MachineDetailScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             thongTinMayWidget(),
-            SizedBox(height: 16.h),
-            RichText(
-              text: TextSpan(
-                style: TextStyle(fontSize: 48.sp, fontWeight: FontWeight.bold),
+            if (widget.machine.status == "ERROR")
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  TextSpan(
-                    text: 'Mã lỗi : ',
-                    style: TextStyle(color: Colors.black),
+                  SizedBox(height: 16.h),
+                  RichText(
+                    text: TextSpan(
+                      style: TextStyle(
+                        fontSize: 48.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      children: [
+                        TextSpan(
+                          text: 'Mã lỗi : ',
+                          style: TextStyle(color: Colors.black),
+                        ),
+                        TextSpan(
+                          text: widget.machine.error_code,
+                          style: TextStyle(color: Colors.redAccent),
+                        ),
+                      ],
+                    ),
                   ),
-                  TextSpan(
-                    text: 'ERROR2025',
-                    style: TextStyle(color: Colors.redAccent),
+                  SizedBox(height: 32.h),
+                  selectFilter(),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 8.w,
+                      vertical: 16.h,
+                    ),
+                    child: Divider(color: Colors.grey),
+                  ),
+                  Text(
+                    "Thống kê lỗi:",
+                    style: TextStyle(
+                      fontSize: 40.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+
+                  SizedBox(height: 24.h),
+                  bieuDoWidget(errorPercent, otherPercent),
+                  ErrorDetailWidget(
+                    machines: [],
+                    indexFilter: indexFilter,
+                    errorDetailsModel: errorDetailsModel,
                   ),
                 ],
               ),
-            ),
-            SizedBox(height: 32.h),
-            selectFilter(),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 16.h),
-              child: Divider(color: Colors.grey),
-            ),
-            Text("Thống kê nguyên nhân:", style: TextStyle(fontSize: 40.sp)),
-
-            SizedBox(height: 24.h),
-            bieuDoWidget(errorPercent, okPercent),
-            ErrorDetailWidget(machines: []),
           ],
         ),
       ),
@@ -77,7 +133,12 @@ class _MachineDetailScreenState extends State<MachineDetailScreen> {
         SizedBox(height: 16.h),
         Row(
           children: [
-            Icon(Icons.circle, color: Colors.green, size: 32.sp),
+            Icon(
+              Icons.circle,
+              color: Constants
+                  .statusMachine[widget.machine.status ?? "NA"]["color"],
+              size: 32.sp,
+            ),
             SizedBox(width: 8.w),
             Text("Trạng thái: ", style: TextStyle(fontSize: 40.sp)),
             Text(
@@ -131,7 +192,7 @@ class _MachineDetailScreenState extends State<MachineDetailScreen> {
                 PieChartSectionData(
                   color: Colors.redAccent,
                   value: errorPercent,
-                  title: "${errorPercent.toInt()}%",
+                  title: "${errorPercent}%",
                   radius: 220.r,
                   titleStyle: TextStyle(
                     fontSize: 64.sp,
@@ -142,7 +203,7 @@ class _MachineDetailScreenState extends State<MachineDetailScreen> {
                 PieChartSectionData(
                   color: Colors.green,
                   value: okPercent,
-                  title: "${okPercent.toInt()}%",
+                  title: "${okPercent}%",
                   radius: 220.r,
                   titleStyle: TextStyle(
                     fontSize: 64.sp,
@@ -156,12 +217,12 @@ class _MachineDetailScreenState extends State<MachineDetailScreen> {
         ),
 
         SizedBox(height: 16.h),
-        IndicatorDot(color: Colors.redAccent, label: "Nguyên nhân khác"),
-        SizedBox(height: 16.h),
         IndicatorDot(
-          color: Colors.green,
-          label: "Nguyên nhân 1 do abc xyx 789",
+          color: Colors.redAccent,
+          label: "Lỗi ${widget.machine.error_code}",
         ),
+        SizedBox(height: 16.h),
+        IndicatorDot(color: Colors.green, label: "Lỗi khác"),
       ],
     );
   }
@@ -169,6 +230,28 @@ class _MachineDetailScreenState extends State<MachineDetailScreen> {
   onChangeIndexFilter(index) {
     setState(() {
       indexFilter = index;
+      if (index == 0) {
+        errorPercent =
+            ((errorStatsModel?.errorCodeErrorsLast7Days ?? 0) /
+                    ((errorStatsModel?.totalErrorsLast7Days == null ||
+                            errorStatsModel?.totalErrorsLast7Days == 0)
+                        ? 1
+                        : errorStatsModel!.totalErrorsLast7Days!) *
+                    100)
+                .round()
+                .toDouble();
+      } else {
+        errorPercent =
+            ((errorStatsModel?.errorCodeErrorsLast30Days ?? 0) /
+                    ((errorStatsModel?.totalErrorsLast30Days == null ||
+                            errorStatsModel?.totalErrorsLast30Days == 0)
+                        ? 1
+                        : errorStatsModel!.totalErrorsLast30Days!) *
+                    100)
+                .round()
+                .toDouble();
+      }
+      otherPercent = 100 - errorPercent;
     });
   }
 
@@ -226,7 +309,10 @@ class IndicatorDot extends StatelessWidget {
           decoration: BoxDecoration(color: color, shape: BoxShape.circle),
         ),
         SizedBox(width: 24.w),
-        Text(label, style: TextStyle(fontSize: 32.sp)),
+        Text(
+          label,
+          style: TextStyle(fontSize: 32.sp, fontWeight: FontWeight.bold),
+        ),
       ],
     );
   }

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:my_app/src/screen/machine_status_screen/machine_status_getdata.dart';
+
+import '../../../core/widget/dialog.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -13,14 +16,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _passwordController = TextEditingController();
   final _rePasswordController = TextEditingController();
 
-  void _handleLogin() {
+  Future _handleLogin() async {
     String email = _emailController.text.trim();
     String password = _passwordController.text.trim();
+    String rePassword = _rePasswordController.text.trim();
+    if (email.isEmpty) {
+      showDialogMessage(message: "Vui lòng nhập mã nhân viên");
+      return;
+    } else if (password.isEmpty) {
+      showDialogMessage(message: "Vui lòng nhập mật khẩu");
+      return;
+    } else if (rePassword.isEmpty) {
+      showDialogMessage(message: "Vui lòng nhập lại mật khẩu");
+      return;
+    } else if (rePassword != password) {
+      showDialogMessage(message: "Mật khẩu nhập lại không đúng");
+      return;
+    }
 
     print('Email: $email');
     print('Mật khẩu: $password');
-
-    Navigator.pop(context);
+    dynamic result = await MachineStatusGetData().registerUser(email, password);
   }
 
   @override
@@ -49,7 +65,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 TextField(
                   controller: _emailController,
                   decoration: InputDecoration(
-                    labelText: 'Email',
+                    labelText: 'Mã nhân viên',
                     prefixIcon: Icon(Icons.email),
                     border: OutlineInputBorder(),
                   ),

@@ -38,6 +38,47 @@ dynamic api_machine_status = {
     },
     {
       "line": "GEN1",
+      "location": "7",
+      "machine_name": "A40 Assembly Heat spreader to Rear housing",
+      "status": "ERROR",
+    },
+    {
+      "line": "GEN1",
+      "location": "8",
+      "machine_name": "A40 Assembly Heat spreader to Rear housing",
+      "status": "RUN",
+    },
+    {
+      "line": "GEN1",
+      "location": "9",
+      "machine_name": "A40 Assembly Heat spreader to Rear housing",
+      "status": "RUN",
+    },
+    {
+      "line": "GEN1",
+      "location": "10",
+      "machine_name": "A40 Assembly Heat spreader to Rear housing",
+      "status": "ERROR",
+    },
+    {
+      "line": "GEN1",
+      "location": "11",
+      "machine_name": "A40 Assembly Heat spreader to Rear housing",
+      "status": "ERROR",
+    },{
+      "line": "GEN1",
+      "location": "12",
+      "machine_name": "A40 Assembly Heat spreader to Rear housing",
+      "status": "RUN",
+    },
+    {
+      "line": "GEN1",
+      "location": "13",
+      "machine_name": "A40 Assembly Heat spreader to Rear housing",
+      "status": "ERROR",
+    },
+    {
+      "line": "GEN1",
       "location": "1",
       "machine_name": "A40 Assembly Heat spreader to Rear housing",
       "status": "ERROR",

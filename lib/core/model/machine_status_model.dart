@@ -26,22 +26,31 @@ class MachineStatusModel {
   String? location;
   String? machineName;
   String? status;
+  String? error_code;
 
-  MachineStatusModel({this.line, this.location, this.machineName, this.status});
+  MachineStatusModel({
+    this.line,
+    this.location,
+    this.machineName,
+    this.status,
+    this.error_code,
+  });
 
   MachineStatusModel.fromJson(Map<String, dynamic> json) {
-    line = json['line'] ?? "";
-    location = json['location'] ?? "";
-    machineName = json['machine_name'];
-    status = json['status'];
+    line = json['LINE'] ?? "";
+    location = json['LOCATION'] ?? "";
+    machineName = json['MACHINE_NAME'];
+    status = json['STATUS'];
+    error_code = json['ERROR_CODE'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['line'] = line;
-    data['location'] = location;
-    data['machine_name'] = machineName;
-    data['status'] = status;
+    data['LINE'] = line;
+    data['LOCATION'] = location;
+    data['MACHINE_NAME'] = machineName;
+    data['STATUS'] = status;
+    data['ERROR_CODE'] = error_code;
     return data;
   }
 }

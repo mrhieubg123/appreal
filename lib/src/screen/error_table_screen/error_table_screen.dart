@@ -1,188 +1,26 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../core/model/error_detail_model.dart';
+import '../../../core/model/error_not_confirm_model.dart';
 import 'widget/drop_down_button.dart';
 
-class ErrorStableScreen extends StatelessWidget {
-  const ErrorStableScreen({super.key});
+class ErrorStableScreen extends StatefulWidget {
+  final ListErrorNotConfirmModel listErrorNotConfirmModel;
+  const ErrorStableScreen({super.key, required this.listErrorNotConfirmModel});
 
-  final List columnNames = const [
-    {"name": "Tên máy", "flex": 2},
-    {"name": "Thời gian lỗi", "flex": 2},
-    {"name": "Mã lỗi", "flex": 2},
-    {"name": "Nguyên nhân", "flex": 2},
-    {"name": "Biện pháp", "flex": 2},
-    {"name": "", "flex": 1},
-  ];
-  final List columnData = const [
-    {"name": "Tên máy", "flex": 2},
-    {"name": "Thời gian lỗi", "flex": 2},
-    {"name": "Mã lỗi", "flex": 2},
-    {"name": "Nguyên nhân", "flex": 2},
-    {"name": "Biện pháp", "flex": 2},
-    {"name": "", "flex": 1},
-  ];
+  @override
+  State<ErrorStableScreen> createState() => _ErrorStableScreenState();
+}
 
-  Widget buildColumnName() {
-    return Row(
-      children: [
-        ...List.generate(columnNames.length, (lineIndex) {
-          return Flexible(
-            flex: columnNames[lineIndex]['flex'],
-            child: IntrinsicHeight(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Center(
-                      child: Text(
-                        columnNames[lineIndex]['name'],
-                        style: TextStyle(
-                          color: const Color.fromARGB(255, 231, 57, 57),
-                          fontSize: 24.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                  VerticalDivider(color: Colors.white),
-                ],
-              ),
-            ),
-          );
-        }),
-      ],
-    );
-  }
+class _ErrorStableScreenState extends State<ErrorStableScreen> {
+  ListErrorNotConfirmModel? listErrorNotConfirmModelState;
 
-  Widget buildColumnRow() {
-    return IntrinsicHeight(
-      child: Row(
-        children: [
-          Flexible(
-            flex: 2,
-            child: IntrinsicHeight(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Center(
-                      child: Text(
-                        columnData[0]['name'],
-                        style: TextStyle(
-                          color: const Color.fromARGB(255, 231, 57, 57),
-                          fontSize: 24.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                  VerticalDivider(color: Colors.white),
-                ],
-              ),
-            ),
-          ),
-          Flexible(
-            flex: 2,
-            child: IntrinsicHeight(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Center(
-                      child: Text(
-                        columnData[0]['name'],
-                        style: TextStyle(
-                          color: const Color.fromARGB(255, 231, 57, 57),
-                          fontSize: 24.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                  VerticalDivider(color: Colors.white),
-                ],
-              ),
-            ),
-          ),
-          Flexible(
-            flex: 2,
-            child: IntrinsicHeight(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Center(
-                      child: Text(
-                        columnData[0]['name'],
-                        style: TextStyle(
-                          color: const Color.fromARGB(255, 231, 57, 57),
-                          fontSize: 24.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                  VerticalDivider(color: Colors.white),
-                ],
-              ),
-            ),
-          ),
-          Flexible(
-            flex: 2,
-            child: IntrinsicHeight(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Center(
-                      child: Text(
-                        columnData[0]['name'],
-                        style: TextStyle(
-                          color: const Color.fromARGB(255, 231, 57, 57),
-                          fontSize: 24.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                  VerticalDivider(color: Colors.white),
-                ],
-              ),
-            ),
-          ),
-          Flexible(
-            flex: 2,
-            child: IntrinsicHeight(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Center(
-                      child: Text(
-                        columnData[0]['name'],
-                        style: TextStyle(
-                          color: const Color.fromARGB(255, 231, 57, 57),
-                          fontSize: 24.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                  VerticalDivider(color: Colors.white),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget buildDatatable() {
-    return Column(
-      children: [buildColumnRow(), buildColumnRow(), buildColumnRow()],
-    );
+  @override
+  void initState() {
+    listErrorNotConfirmModelState = widget.listErrorNotConfirmModel;
+    super.initState();
   }
 
   @override
@@ -193,8 +31,9 @@ class ErrorStableScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
         centerTitle: true,
         leading: InkWell(
-            onTap : ()=> Navigator.pop(context),
-          child: Icon(Icons.arrow_back, size: 64.h, color: Colors.white)),
+          onTap: () => Navigator.pop(context),
+          child: Icon(Icons.arrow_back, size: 64.h, color: Colors.white),
+        ),
         title: Text(
           "Danh sách lỗi",
           textAlign: TextAlign.center,
@@ -220,7 +59,7 @@ class ErrorStableScreen extends StatelessWidget {
             children: [
               SizedBox(height: kToolbarHeight + 120.h),
               Text(
-                "Tổng số lỗi: 20",
+                "Tổng số lỗi: ${listErrorNotConfirmModelState?.data?.length ?? 0}",
                 style: TextStyle(
                   fontSize: 40.sp,
                   fontWeight: FontWeight.bold,
@@ -228,9 +67,22 @@ class ErrorStableScreen extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 32.h),
-              DropDownButton(),
-              DropDownButton(),
-              DropDownButton(),
+              ...List.generate(
+                listErrorNotConfirmModelState?.data?.length ?? 0,
+                (index) {
+                  return DropDownButton(
+                    errorNotConfirmModel:
+                        listErrorNotConfirmModelState!.data![index],
+                    onConfirmSuccess: () {
+                      setState(() {
+                        widget.listErrorNotConfirmModel.data?.removeAt(index);
+                        listErrorNotConfirmModelState =
+                            widget.listErrorNotConfirmModel;
+                      });
+                    },
+                  );
+                },
+              ),
             ],
           ),
         ),

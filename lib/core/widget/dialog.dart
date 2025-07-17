@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../main.dart';
 
-showDialogMessage({message = "", title = "Thông báo"}) {
+showDialogMessage({message = "", title = "Thông báo", onOk}) {
   showDialog(
     context: navigatorKey.currentContext!,
     builder: (context) {
@@ -13,7 +13,8 @@ showDialogMessage({message = "", title = "Thông báo"}) {
           TextButton(
             onPressed: () {
               // Xử lý khi xác nhận
-              Navigator.pop(context);
+              Navigator.pop(navigatorKey.currentContext!);
+              if (onOk != null) onOk();
             },
             child: const Text("Đóng"),
           ),

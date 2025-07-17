@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:my_app/main.dart';
+import 'package:my_app/src/screen/machine_status_screen/machine_status_getdata.dart';
 
 import '../machine_status_screen/machine_status_screen.dart';
 import 'register_screen.dart';
@@ -15,17 +17,21 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  void _handleLogin() {
+  void _handleLogin() async {
     String email = _emailController.text.trim();
     String password = _passwordController.text.trim();
 
     print('Email: $email');
     print('Mật khẩu: $password');
-
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (BuildContext context) => MachineStatusApp()),
-    );
+    dynamic result = await MachineStatusGetData().loginUser(email, password);
+    if (result == true) {
+      Navigator.push(
+        navigatorKey.currentContext!,
+        MaterialPageRoute(
+          builder: (BuildContext context) => MachineStatusApp(),
+        ),
+      );
+    }
   }
 
   goToRegisterScreen() {
@@ -59,7 +65,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 TextField(
                   controller: _emailController,
                   decoration: InputDecoration(
-                    labelText: 'Email',
+                    labelText: 'Mã nhân viên',
                     prefixIcon: Icon(Icons.email),
                     border: OutlineInputBorder(),
                   ),

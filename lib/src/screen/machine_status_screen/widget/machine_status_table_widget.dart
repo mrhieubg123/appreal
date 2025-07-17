@@ -2,7 +2,6 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:my_app/main.dart';
-
 import '../../../../core/model/machine_status_model.dart';
 import '../../machine_detail_screen/machine_detsail_screen.dart';
 
@@ -14,28 +13,14 @@ class MachineStatusTable extends StatelessWidget {
     required this.columnNames,
   });
 
-  // Mock data: trạng thái mỗi line (xanh: chạy, đỏ: lỗi, vàng: dừng, xám: tắt)
-  // final List<List<Color>> statusData = const [
-  //   [
-  //     Colors.yellow,
-  //     Colors.green,
-  //     Colors.green,
-  //     Colors.green,
-  //     Colors.green,
-  //     Colors.green,
-  //     Colors.green,
-  //     Colors.green,
-  //     Colors.green,
-  //     Colors.green,
-  //   ],
-  // ];
-
-  dynamic listColor = {
+  final dynamic listColor = {
     "RUN": Colors.green,
-    "WARNING": Colors.yellow,
+    "OFF": Colors.yellow,
     "ERROR": Colors.red,
     "NA": Colors.grey,
   };
+
+  final int numberRows = 6;
 
   List<MachineStatusModel> machines = [];
 
@@ -50,20 +35,9 @@ class MachineStatusTable extends StatelessWidget {
     "Line_5R",
   ];
 
-  List<String> columnNames = [
-    "Prt",
-    "H1",
-    "H2",
-    "H3",
-    "H4",
-    "H5",
-    "H6",
-    "G1",
-    "G2",
-    "Reflow",
-  ];
+  List<String> columnNames = ["1", "2", "3", "4", "5", "6"];
 
-  Widget buildLight({Color? color, double? radius = 10, onTap}) {
+  Widget buildLight({Color? color, double? radius = 20, onTap}) {
     return InkWell(
       onTap: onTap,
       child: CircleAvatar(radius: radius, backgroundColor: color),
@@ -72,13 +46,13 @@ class MachineStatusTable extends StatelessWidget {
 
   getMachineFromLineLocation(line, location) {
     return machines.firstWhereOrNull(
-      (e) => (e.line == line && e.location == location),
+      (e) => (e.line == line && e.location == location.toString()),
     );
   }
 
   getColorFromLineLocation(line, location) {
     MachineStatusModel? result = machines.firstWhereOrNull(
-      (e) => (e.line == line && e.location == location),
+      (e) => (e.line == line && e.location == location.toString()),
     );
     if (result != null) return listColor[result.status];
     return Colors.grey;
@@ -103,15 +77,15 @@ class MachineStatusTable extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              ...List.generate(columnNames.length, (lineIndex) {
+              ...List.generate(numberRows, (index) {
                 return Flexible(
-                  flex: lineIndex == columnNames.length - 1 ? 2 : 1,
+                  flex: 1,
                   child: Center(
                     child: Text(
-                      columnNames[lineIndex],
+                      (index + 1).toString(),
                       style: TextStyle(
                         color: const Color.fromARGB(255, 231, 57, 57),
-                        fontSize: 24.sp,
+                        fontSize: 42.sp,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -165,77 +139,111 @@ class MachineStatusTable extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(color: Color(0xff1b1c54)),
-      child: Column(
-        children: [
-          SizedBox(height: 32.h),
-          buildStatusName(),
-          SizedBox(height: 32.h),
-          buildColumnName(),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 16.h),
-            child: Divider(color: Colors.grey),
-          ),
-          ...List.generate(lineNames.length, (lineIndex) {
-            return Column(
-              children: [
-                Row(
-                  children: [
-                    SizedBox(
-                      width: 90.w,
-                      child: Text(
-                        lineNames[lineIndex],
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white, fontSize: 24.sp),
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            SizedBox(height: 32.h),
+            buildStatusName(),
+            SizedBox(height: 32.h),
+            buildColumnName(),
+            Padding(
+              padding: EdgeInsets.fromLTRB(8.w, 0, 8.w, 16.h),
+              child: Divider(color: Colors.grey),
+            ),
+            ...List.generate(lineNames.length, (lineIndex) {
+              return Column(
+                children: [
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 90.w,
+                        child: Text(
+                          lineNames[lineIndex],
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 24.sp,
+                          ),
+                        ),
                       ),
-                    ),
-                    Expanded(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          ...List.generate(
-                            columnNames.length,
-                            (index) => Flexible(
-                              flex: index == columnNames.length - 1 ? 2 : 1,
-                              child:
-                                  getMachineFromLineLocation(
-                                        lineNames[lineIndex],
-                                        columnNames[index],
-                                      ) !=
-                                      null
-                                  ? Center(
-                                      child: buildLight(
-                                        radius: 16.r,
-                                        onTap: () => goToMachineDetailScreen(
-                                          getMachineFromLineLocation(
-                                            lineNames[lineIndex],
-                                            columnNames[index],
+                      Expanded(
+                        child: Column(
+                          children: [
+                            ...List.generate(3, (indexColumn) {
+                              return Column(
+                                children: [
+                                  SizedBox(
+                                    height: 72.h,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        ...List.generate(
+                                          numberRows,
+                                          (index) => Flexible(
+                                            flex: 1,
+                                            child:
+                                                getMachineFromLineLocation(
+                                                      lineNames[lineIndex],
+                                                      index +
+                                                          1 +
+                                                          indexColumn *
+                                                              numberRows,
+                                                    ) !=
+                                                    null
+                                                ? Center(
+                                                    child: buildLight(
+                                                      radius: 32.r,
+                                                      onTap: () =>
+                                                          goToMachineDetailScreen(
+                                                            getMachineFromLineLocation(
+                                                              lineNames[lineIndex],
+                                                              index +
+                                                                  1 +
+                                                                  indexColumn *
+                                                                      numberRows,
+                                                            ),
+                                                          ),
+                                                      color:
+                                                          getColorFromLineLocation(
+                                                            lineNames[lineIndex],
+                                                            index +
+                                                                1 +
+                                                                indexColumn *
+                                                                    numberRows,
+                                                          ),
+                                                    ),
+                                                  )
+                                                : SizedBox(
+                                                    width: double.infinity,
+                                                  ),
                                           ),
                                         ),
-                                        color: getColorFromLineLocation(
-                                          lineNames[lineIndex],
-                                          columnNames[index],
-                                        ),
-                                      ),
-                                    )
-                                  : SizedBox(width: double.infinity),
-                            ),
-                          ),
-                        ],
+                                      ],
+                                    ),
+                                  ),
+                                  if (indexColumn != 2)
+                                    Divider(color: Colors.white),
+                                ],
+                              );
+                            }),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 8.w,
-                    vertical: 16.h,
+                    ],
                   ),
-                  child: Divider(color: Colors.grey),
-                ),
-              ],
-            );
-          }),
-        ],
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 8.w,
+                      vertical: 16.h,
+                    ),
+                    child: Divider(color: Colors.grey),
+                  ),
+                ],
+              );
+            }),
+          ],
+        ),
       ),
     );
   }
