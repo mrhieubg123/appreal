@@ -111,8 +111,8 @@ class _MachineStatusAppState extends State<MachineStatusApp> {
                     style: TextStyle(color: Colors.white, fontSize: 48.sp),
                   ),
                 ),
-                if (listErrorNotConfirmModel?.count != null &&
-                    listErrorNotConfirmModel?.count != 0)
+                if (listErrorNotConfirmModel?.data != null &&
+                    listErrorNotConfirmModel!.data!.isNotEmpty)
                   Positioned(
                     right: 0,
                     top: 0,
@@ -120,7 +120,8 @@ class _MachineStatusAppState extends State<MachineStatusApp> {
                       radius: 32.r,
                       backgroundColor: Colors.red,
                       child: Text(
-                        (listErrorNotConfirmModel?.count ?? 0).toString(),
+                        (listErrorNotConfirmModel?.data?.length ?? 0)
+                            .toString(),
                         style: TextStyle(fontSize: 32.sp, color: Colors.white),
                       ),
                     ),
@@ -303,9 +304,10 @@ class _MachineStatusAppState extends State<MachineStatusApp> {
   }
 
   goToErrorTableScreen(context) {
-    if (listErrorNotConfirmModel?.count == null ||
-        listErrorNotConfirmModel?.count == 0) {
+    if (listErrorNotConfirmModel?.data == null ||
+        listErrorNotConfirmModel!.data!.isEmpty) {
       showDialogMessage(message: "Không có lỗi nào cần xác nhận");
+      return;
     }
     if (listErrorNotConfirmModel != null) {
       Navigator.push(

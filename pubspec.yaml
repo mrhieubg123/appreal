@@ -39,6 +39,7 @@ dependencies:
   fl_chart: ^1.0.0
   flutter_screenutil: ^5.9.3
   collection: ^1.19.1
+  shared_preferences:
 
 dev_dependencies:
   flutter_test:

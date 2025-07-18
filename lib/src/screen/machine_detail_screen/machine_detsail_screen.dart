@@ -1,7 +1,9 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../../core/model/dashboard_error_model.dart';
 import '../../../core/model/error_detail_model.dart';
+import '../../../core/model/error_detail_total_model.dart';
 import '../../../core/model/error_stats_model.dart';
 import '../../../core/model/machine_status_model.dart';
 import '../../data_mau/constants.dart';
@@ -20,36 +22,75 @@ class _MachineDetailScreenState extends State<MachineDetailScreen> {
   int indexFilter = 0;
   ErrorDetailsModel? errorDetailsModel;
   ErrorStatsModel? errorStatsModel;
+  DashboardErrorModel? dashboardErrorModel;
+  ErrorDetailTotalModel? errorDetailTotalModel;
   @override
   void initState() {
     getData();
     super.initState();
   }
 
+  List listStringRange = ["7day", "month"];
+  List listColorError = [
+    Colors.red,
+    Colors.green,
+    Colors.yellow,
+    Colors.blue,
+    Colors.orange,
+    Colors.grey,
+    Colors.black,
+    Colors.white,
+    Colors.teal,
+    Colors.deepPurple,
+  ];
+  List? listPercentError = [];
+
   double errorPercent = 25; // 25% lỗi
   double otherPercent = 75; // 75% OK
 
   getData() async {
+    dashboardErrorModel = await MachineStatusGetData().getDashboardError(
+      body: {
+        "line": widget.machine.line,
+        "location": widget.machine.location,
+        "machine_type": widget.machine.machineType,
+        "machine_name": widget.machine.machineName,
+        "range": listStringRange[indexFilter],
+      },
+    );
+    listPercentError = dashboardErrorModel?.data
+        ?.map((e) => (e.percentage ?? 0).round())
+        .toList();
     if (widget.machine.error_code != null) {
-      errorDetailsModel = await MachineStatusGetData().getListErrorDetail(
-        errorCode: widget.machine.error_code!,
+      errorDetailTotalModel = await MachineStatusGetData().getErrorDetail(
+        body: {
+          "line": widget.machine.line,
+          "location": widget.machine.location,
+          "machine_type": widget.machine.machineType,
+          "machine_name": widget.machine.machineName,
+          "error_code": widget.machine.error_code,
+        },
       );
-      errorStatsModel = await MachineStatusGetData().getErrorStatsModel(
-        errorCode: widget.machine.error_code!,
-      );
-      setState(() {
-        errorPercent =
-            ((errorStatsModel?.errorCodeErrorsLast7Days ?? 0) /
-                    ((errorStatsModel?.totalErrorsLast7Days == null ||
-                            errorStatsModel?.totalErrorsLast7Days == 0)
-                        ? 1
-                        : errorStatsModel!.totalErrorsLast7Days!) *
-                    100)
-                .round()
-                .toDouble();
-        otherPercent = 100 - errorPercent;
-      });
+      // errorDetailsModel = await MachineStatusGetData().getListErrorDetail(
+      //   errorCode: widget.machine.error_code!,
+      // );
+      // errorStatsModel = await MachineStatusGetData().getErrorStatsModel(
+      //   errorCode: widget.machine.error_code!,
+      // );
+      // setState(() {
+      //   errorPercent =
+      //       ((errorStatsModel?.errorCodeErrorsLast7Days ?? 0) /
+      //               ((errorStatsModel?.totalErrorsLast7Days == null ||
+      //                       errorStatsModel?.totalErrorsLast7Days == 0)
+      //                   ? 1
+      //                   : errorStatsModel!.totalErrorsLast7Days!) *
+      //               100)
+      //           .round()
+      //           .toDouble();
+      //   otherPercent = 100 - errorPercent;
+      // });
     }
+    setState(() {});
   }
 
   @override
@@ -66,11 +107,11 @@ class _MachineDetailScreenState extends State<MachineDetailScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             thongTinMayWidget(),
-            if (widget.machine.status == "ERROR")
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: 16.h),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (widget.machine.status == "ERROR") SizedBox(height: 16.h),
+                if (widget.machine.status == "ERROR")
                   RichText(
                     text: TextSpan(
                       style: TextStyle(
@@ -89,32 +130,33 @@ class _MachineDetailScreenState extends State<MachineDetailScreen> {
                       ],
                     ),
                   ),
-                  SizedBox(height: 32.h),
-                  selectFilter(),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 8.w,
-                      vertical: 16.h,
-                    ),
-                    child: Divider(color: Colors.grey),
+                SizedBox(height: 32.h),
+                selectFilter(),
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 8.w,
+                    vertical: 16.h,
                   ),
-                  Text(
-                    "Thống kê lỗi:",
-                    style: TextStyle(
-                      fontSize: 40.sp,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  child: Divider(color: Colors.grey),
+                ),
+                Text(
+                  "Thống kê lỗi:",
+                  style: TextStyle(
+                    fontSize: 40.sp,
+                    fontWeight: FontWeight.bold,
                   ),
+                ),
 
-                  SizedBox(height: 24.h),
-                  bieuDoWidget(errorPercent, otherPercent),
+                SizedBox(height: 24.h),
+                bieuDoWidget(errorPercent, otherPercent),
+                if (widget.machine.status == "ERROR")
                   ErrorDetailWidget(
                     machines: [],
                     indexFilter: indexFilter,
-                    errorDetailsModel: errorDetailsModel,
+                    errorDetailsModel: errorDetailTotalModel,
                   ),
-                ],
-              ),
+              ],
+            ),
           ],
         ),
       ),
@@ -189,26 +231,18 @@ class _MachineDetailScreenState extends State<MachineDetailScreen> {
               sectionsSpace: 8.h,
               centerSpaceRadius: 60.r,
               sections: [
-                PieChartSectionData(
-                  color: Colors.redAccent,
-                  value: errorPercent,
-                  title: "${errorPercent}%",
-                  radius: 220.r,
-                  titleStyle: TextStyle(
-                    fontSize: 64.sp,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                PieChartSectionData(
-                  color: Colors.green,
-                  value: okPercent,
-                  title: "${okPercent}%",
-                  radius: 220.r,
-                  titleStyle: TextStyle(
-                    fontSize: 64.sp,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                ...List.generate(
+                  listPercentError?.length ?? 0,
+                  (index) => PieChartSectionData(
+                    color: listColorError[index],
+                    value: listPercentError![index].toDouble(),
+                    title: "${listPercentError![index]}%",
+                    radius: 220.r,
+                    titleStyle: TextStyle(
+                      fontSize: 32.sp,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ],
@@ -216,13 +250,20 @@ class _MachineDetailScreenState extends State<MachineDetailScreen> {
           ),
         ),
 
-        SizedBox(height: 16.h),
-        IndicatorDot(
-          color: Colors.redAccent,
-          label: "Lỗi ${widget.machine.error_code}",
+        Wrap(
+          children: [
+            ...List.generate(
+              listPercentError?.length ?? 0,
+              (index) => SizedBox(
+                width: 1.sw / 3 - 40.w,
+                child: IndicatorDot(
+                  color: listColorError[index],
+                  label: "Lỗi ${dashboardErrorModel?.data?[index].errorCode}",
+                ),
+              ),
+            ),
+          ],
         ),
-        SizedBox(height: 16.h),
-        IndicatorDot(color: Colors.green, label: "Lỗi khác"),
       ],
     );
   }
@@ -230,29 +271,8 @@ class _MachineDetailScreenState extends State<MachineDetailScreen> {
   onChangeIndexFilter(index) {
     setState(() {
       indexFilter = index;
-      if (index == 0) {
-        errorPercent =
-            ((errorStatsModel?.errorCodeErrorsLast7Days ?? 0) /
-                    ((errorStatsModel?.totalErrorsLast7Days == null ||
-                            errorStatsModel?.totalErrorsLast7Days == 0)
-                        ? 1
-                        : errorStatsModel!.totalErrorsLast7Days!) *
-                    100)
-                .round()
-                .toDouble();
-      } else {
-        errorPercent =
-            ((errorStatsModel?.errorCodeErrorsLast30Days ?? 0) /
-                    ((errorStatsModel?.totalErrorsLast30Days == null ||
-                            errorStatsModel?.totalErrorsLast30Days == 0)
-                        ? 1
-                        : errorStatsModel!.totalErrorsLast30Days!) *
-                    100)
-                .round()
-                .toDouble();
-      }
-      otherPercent = 100 - errorPercent;
     });
+    getData();
   }
 
   selectFilter() {
@@ -308,7 +328,7 @@ class IndicatorDot extends StatelessWidget {
           height: 48.w,
           decoration: BoxDecoration(color: color, shape: BoxShape.circle),
         ),
-        SizedBox(width: 24.w),
+        SizedBox(width: 8.w),
         Text(
           label,
           style: TextStyle(fontSize: 32.sp, fontWeight: FontWeight.bold),

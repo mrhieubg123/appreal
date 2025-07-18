@@ -36,7 +36,6 @@ class _DropDownButtonCauseState extends State<DropDownButtonCause> {
             child: Container(
               width: double.infinity,
               clipBehavior: Clip.hardEdge,
-              // padding: EdgeInsets.symmetric(vertical: 32.h, horizontal: 32.w),
               decoration: BoxDecoration(
                 color: Colors.white,
                 border: Border.all(
@@ -57,9 +56,9 @@ class _DropDownButtonCauseState extends State<DropDownButtonCause> {
                       ),
                       child: Center(
                         child: Text(
-                          widget.indexFilter == 0
-                              ? widget.cause.countWeek.toString()
-                              : widget.cause.countMonth.toString(),
+                          widget.cause.listCount!
+                              .reduce((a, b) => a + b)
+                              .toString(),
                           style: TextStyle(
                             fontSize: 48.sp,
                             color: Colors.white,
@@ -127,10 +126,13 @@ class _DropDownButtonCauseState extends State<DropDownButtonCause> {
                     ],
                   ),
                   SizedBox(height: 16.h),
-                  ...List.generate(widget.cause.listSolution?.length ?? 0, (
+                  ...List.generate(widget.cause.solutions?.length ?? 0, (
                     index,
                   ) {
-                    return giaiPhapWiget(widget.cause.listSolution![index]);
+                    return giaiPhapWiget(
+                      widget.cause.solutions![index],
+                      widget.cause.listCount![index],
+                    );
                   }),
                 ],
               ),
@@ -140,50 +142,45 @@ class _DropDownButtonCauseState extends State<DropDownButtonCause> {
     );
   }
 
-  giaiPhapWiget(ListSolution solution) {
-    return Container(
-      child: Column(
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                margin: EdgeInsets.only(right: 16.w),
-                padding: EdgeInsets.all(8.w),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.amberAccent,
-                ),
-                child: Center(
-                  child: Text(
-                    widget.indexFilter == 0
-                        ? solution.count_week_solution.toString()
-                        : solution.count_month_solution.toString(),
-                    style: TextStyle(
-                      fontSize: 40.sp,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
+  giaiPhapWiget(solution, count) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Container(
+              margin: EdgeInsets.only(right: 16.w),
+              padding: EdgeInsets.all(8.w),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.amberAccent,
               ),
-              Expanded(
+              child: Center(
                 child: Text(
-                  solution.solution.toString(),
+                  count.toString(),
                   style: TextStyle(
-                    fontSize: 36.sp,
-                    color: Colors.black,
-                    // fontWeight: FontWeight.bold,
+                    fontSize: 40.sp,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
-            ],
-          ),
-          SizedBox(height: 8.h),
-          Divider(color: Colors.grey),
-          SizedBox(height: 8.h),
-        ],
-      ),
+            ),
+            Expanded(
+              child: Text(
+                solution.toString(),
+                style: TextStyle(
+                  fontSize: 36.sp,
+                  color: Colors.black,
+                  // fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 8.h),
+        Divider(color: Colors.grey),
+        SizedBox(height: 8.h),
+      ],
     );
   }
 }

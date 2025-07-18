@@ -12,15 +12,20 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _rePasswordController = TextEditingController();
 
   Future _handleLogin() async {
+    String name = _nameController.text.trim();
     String email = _emailController.text.trim();
     String password = _passwordController.text.trim();
     String rePassword = _rePasswordController.text.trim();
-    if (email.isEmpty) {
+    if (name.isEmpty) {
+      showDialogMessage(message: "Vui lòng nhập tên");
+      return;
+    } else if (email.isEmpty) {
       showDialogMessage(message: "Vui lòng nhập mã nhân viên");
       return;
     } else if (password.isEmpty) {
@@ -36,7 +41,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     print('Email: $email');
     print('Mật khẩu: $password');
-    dynamic result = await MachineStatusGetData().registerUser(email, password);
+    dynamic result = await MachineStatusGetData().registerUser(
+      name: name,
+      cardId: email,
+      password: password,
+    );
   }
 
   @override
@@ -62,6 +71,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                 ),
                 SizedBox(height: 64.h),
+                TextField(
+                  controller: _nameController,
+                  decoration: InputDecoration(
+                    labelText: 'Tên nhân viên',
+                    prefixIcon: Icon(Icons.person),
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                SizedBox(height: 32.h),
                 TextField(
                   controller: _emailController,
                   decoration: InputDecoration(

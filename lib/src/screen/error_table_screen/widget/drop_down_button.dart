@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../core/model/error_by_code_model.dart';
 import '../../../../core/model/error_detail_model.dart';
 import '../../../../core/model/error_not_confirm_model.dart';
 import '../../../../core/widget/dialog.dart';
@@ -22,17 +23,48 @@ class DropDownButton extends StatefulWidget {
 
 class _DropDownButtonState extends State<DropDownButton> {
   bool isOpen = false;
-  ErrorDetailsModel? errorDetailsModel;
+  ErrorDetailByCodeModel? errorDetailByCodeModel;
+  List<ListCause>? dsNguyenNhan;
   ListCause? nguyenNhan;
-  ListSolution? giaiPhap;
+  String? giaiPhap;
+
+  Future initData() async {
+    errorDetailByCodeModel ??= await MachineStatusGetData().getErrorByCode(
+      body: {
+        "machine_id": widget.errorNotConfirmModel.iD,
+        "error_code": widget.errorNotConfirmModel.eRRORCODE,
+      },
+    );
+    dsNguyenNhan = groupByCause(errorDetailByCodeModel?.errorList ?? []);
+    nguyenNhan = null;
+    giaiPhap = null;
+  }
 
   onOpenDropDown() async {
-    errorDetailsModel ??= await MachineStatusGetData().getListErrorDetail(
-      errorCode: widget.errorNotConfirmModel.eRRORCODE!,
-    );
+    await initData();
     setState(() {
       isOpen = !isOpen;
     });
+  }
+
+  List<ListCause> groupByCause(List<ErrorList> data) {
+    final Map<String, ListCause> causeMap = {};
+
+    for (var item in data) {
+      final cause = item.cause;
+      final solution = item.solution;
+
+      if (causeMap.containsKey(cause)) {
+        final existing = causeMap[cause]!;
+        if (!existing.solutions!.contains(solution)) {
+          existing.solutions!.add(solution!);
+        }
+      } else {
+        causeMap[cause!] = ListCause(cause: cause, solutions: [solution!]);
+      }
+    }
+
+    return causeMap.values.toList();
   }
 
   @override
@@ -121,30 +153,30 @@ class _DropDownButtonState extends State<DropDownButton> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // InkWell(
-                  //   onTap: onTapAddGiaiPhap,
-                  //   child: Container(
-                  //     margin: EdgeInsets.fromLTRB(0, 32.h, 0, 0),
-                  //     padding: EdgeInsets.symmetric(
-                  //       vertical: 12.h,
-                  //       horizontal: 16.w,
-                  //     ),
-                  //     decoration: BoxDecoration(
-                  //       color: Colors.white,
-                  //       border: Border.all(color: Colors.blueAccent),
-                  //       borderRadius: BorderRadius.circular(18.r),
-                  //     ),
-                  //     child: Text(
-                  //       "Thêm nguyên nhân, giải pháp +",
-                  //       style: TextStyle(
-                  //         fontSize: 30.sp,
-                  //         color: Colors.blueAccent,
-                  //         fontWeight: FontWeight.w500,
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
-                  // SizedBox(height: 16.h),
+                  InkWell(
+                    onTap: onTapAddGiaiPhap,
+                    child: Container(
+                      margin: EdgeInsets.fromLTRB(0, 32.h, 0, 0),
+                      padding: EdgeInsets.symmetric(
+                        vertical: 12.h,
+                        horizontal: 16.w,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(color: Colors.blueAccent),
+                        borderRadius: BorderRadius.circular(18.r),
+                      ),
+                      child: Text(
+                        "Thêm nguyên nhân, giải pháp +",
+                        style: TextStyle(
+                          fontSize: 30.sp,
+                          color: Colors.blueAccent,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 16.h),
                   Text(
                     "Chọn nguyên nhân",
                     style: TextStyle(
@@ -214,7 +246,7 @@ class _DropDownButtonState extends State<DropDownButton> {
                         children: [
                           Expanded(
                             child: Text(
-                              giaiPhap?.solution ?? "--Chọn giải pháp--",
+                              giaiPhap ?? "--Chọn giải pháp--",
                               style: TextStyle(
                                 fontSize: 36.sp,
                                 color: Colors.black,
@@ -264,19 +296,6 @@ class _DropDownButtonState extends State<DropDownButton> {
       ),
     );
   }
-
-  List dsNguyenNhan = [
-    "nguyen nhan 1",
-    "nguyen nhan 2",
-    "nguyen nhan 3",
-    "nguyen nhan 4",
-  ];
-  List dsGiaiPhap = [
-    "Giai phap 1",
-    "Giai phap 2",
-    "Giai phap 3",
-    "Giai phap 4",
-  ];
 
   infoRow({title, text, color}) {
     return RichText(
@@ -348,11 +367,11 @@ class _DropDownButtonState extends State<DropDownButton> {
                 ),
                 SizedBox(height: 32.h),
                 ...List.generate(
-                  errorDetailsModel?.listCause?.length ?? 0,
+                  dsNguyenNhan?.length ?? 0,
                   (index) => InkWell(
                     onTap: () {
                       setState(() {
-                        nguyenNhan = errorDetailsModel!.listCause![index];
+                        nguyenNhan = dsNguyenNhan?[index];
                       });
                       Navigator.pop(context);
                     },
@@ -361,7 +380,7 @@ class _DropDownButtonState extends State<DropDownButton> {
                       children: [
                         SizedBox(height: 16.h),
                         Text(
-                          errorDetailsModel!.listCause![index].cause!,
+                          dsNguyenNhan![index].cause!,
                           style: TextStyle(
                             fontSize: 24.sp,
                             fontWeight: FontWeight.w400,
@@ -428,36 +447,13 @@ class _DropDownButtonState extends State<DropDownButton> {
                     ),
                   ],
                 ),
-                SizedBox(height: 16.h),
-                InkWell(
-                  onTap: onTapAddGiaiPhap,
-                  child: Container(
-                    margin: EdgeInsets.fromLTRB(0, 32.h, 0, 0),
-                    padding: EdgeInsets.symmetric(
-                      vertical: 12.h,
-                      horizontal: 16.w,
-                    ),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.blueAccent),
-                      borderRadius: BorderRadius.circular(18.r),
-                    ),
-                    child: Text(
-                      "Thêm giải pháp +",
-                      style: TextStyle(
-                        fontSize: 24.sp,
-                        color: Colors.blueAccent,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ),
                 SizedBox(height: 32.h),
                 ...List.generate(
-                  nguyenNhan?.listSolution?.length ?? 0,
+                  nguyenNhan?.solutions?.length ?? 0,
                   (index) => InkWell(
                     onTap: () {
                       setState(() {
-                        giaiPhap = nguyenNhan?.listSolution?[index];
+                        giaiPhap = nguyenNhan?.solutions?[index];
                       });
                       Navigator.pop(context);
                     },
@@ -466,7 +462,7 @@ class _DropDownButtonState extends State<DropDownButton> {
                       children: [
                         SizedBox(height: 16.h),
                         Text(
-                          nguyenNhan?.listSolution?[index].solution ?? "",
+                          nguyenNhan?.solutions?[index] ?? "",
                           style: TextStyle(
                             fontSize: 24.sp,
                             fontWeight: FontWeight.w400,
@@ -495,17 +491,19 @@ class _DropDownButtonState extends State<DropDownButton> {
       showDialogMessage(message: "Vui lòng chọn giải pháp");
       return;
     }
-    dynamic result = await MachineStatusGetData().createConfirmData(
-      errorCode: widget.errorNotConfirmModel.eRRORCODE!,
-      idCause: nguyenNhan!.idCause!,
-      idSolution: giaiPhap?.idSolution,
-      textSolution: giaiPhap?.solution,
-      userId: MachineStatusGetData.userId,
-      idErrorConfirm: widget.errorNotConfirmModel.iD!,
+    ErrorList? errorListSelected = errorDetailByCodeModel!.errorList
+        ?.firstWhere(
+          (e) => (e.cause == nguyenNhan?.cause && e.solution == giaiPhap),
+        );
+    dynamic result = await MachineStatusGetData().createConfirmError(
+      body: {
+        "idconfirm": errorDetailByCodeModel?.idconfirm,
+        "error_id": errorListSelected?.id,
+      },
     );
     if (result != null) {
       isOpen = false;
-      errorDetailsModel = null;
+      errorDetailByCodeModel = null;
       giaiPhap = null;
       nguyenNhan = null;
       widget.onConfirmSuccess!();
@@ -513,14 +511,20 @@ class _DropDownButtonState extends State<DropDownButton> {
   }
 
   onTapAddGiaiPhap() async {
-    Navigator.pop(navigatorKey.currentContext!);
-    final result = await showTextInputDialog();
-    if (result != null && result != "") {
-      setState(() {
-        giaiPhap = ListSolution(solution: result);
-        nguyenNhan?.listSolution?.add(giaiPhap!);
-      });
-      showDialogMessage(message: "Thêm giải pháp thành công");
+    final List<String?>? result = await showTextInputDialog();
+    if (result != null) {
+      dynamic resultApi = await MachineStatusGetData().createCauseSolution(
+        body: {
+          "error_code": widget.errorNotConfirmModel.eRRORCODE,
+          "error_name": widget.errorNotConfirmModel.eRRORTYPE,
+          "cause": result[0],
+          "solution": result[1],
+        },
+      );
+      if (resultApi == true) {
+        showDialogMessage(message: "Thêm nguyên nhân/giải pháp mới thành công");
+        initData();
+      }
     }
   }
 }

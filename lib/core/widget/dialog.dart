@@ -8,7 +8,7 @@ showDialogMessage({message = "", title = "Thông báo", onOk}) {
     builder: (context) {
       return AlertDialog(
         title: Text(title),
-        content: Text(message),
+        content: Text(message.toString()),
         actions: [
           TextButton(
             onPressed: () {
@@ -24,20 +24,33 @@ showDialogMessage({message = "", title = "Thông báo", onOk}) {
   );
 }
 
-Future<String?> showTextInputDialog() async {
-  TextEditingController controller = TextEditingController();
+Future<List<String?>?> showTextInputDialog() async {
+  TextEditingController controllerNN = TextEditingController();
+  TextEditingController controllerGP = TextEditingController();
 
-  return showDialog<String?>(
+  return showDialog<List<String?>>(
     context: navigatorKey.currentContext!,
     builder: (context) {
       return AlertDialog(
-        title: const Text('Nhập giải pháp mới'),
-        content: TextField(
-          controller: controller,
-          decoration: const InputDecoration(
-            hintText: 'Nhập vào đây...',
-            border: OutlineInputBorder(),
-          ),
+        title: const Text('Nhập nguyên nhân/giải pháp mới'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: controllerNN,
+              decoration: const InputDecoration(
+                hintText: 'Nhập nguyên nhân...',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            TextField(
+              controller: controllerGP,
+              decoration: const InputDecoration(
+                hintText: 'Nhập giải pháp...',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ],
         ),
         actions: [
           TextButton(
@@ -46,7 +59,19 @@ Future<String?> showTextInputDialog() async {
           ),
           ElevatedButton(
             onPressed: () {
-              Navigator.pop(context, controller.text); // đóng dialog
+              String nn = controllerNN.text.trim();
+              String gp = controllerGP.text.trim();
+              if (nn.isEmpty) {
+                showDialogMessage(message: "Vui lòng nhập nguyên nhân");
+                return;
+              } else if (gp.isEmpty) {
+                showDialogMessage(message: "Vui lòng nhập giải pháp");
+                return;
+              }
+              Navigator.pop(context, [
+                controllerNN.text,
+                controllerGP.text,
+              ]); // đóng dialog
               // Hoặc gọi callback / xử lý dữ liệu ở đây
             },
             child: const Text('Xác nhận'),

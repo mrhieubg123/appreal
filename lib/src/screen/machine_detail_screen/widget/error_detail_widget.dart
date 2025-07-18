@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/model/error_detail_model.dart';
+import '../../../../core/model/error_detail_total_model.dart';
 import '../../../../core/model/machine_status_model.dart';
 import '../../machine_detail_screen/machine_detsail_screen.dart';
 import 'drop_down_button_cause.dart';
@@ -14,12 +15,39 @@ class ErrorDetailWidget extends StatelessWidget {
     this.errorDetailsModel,
     required this.indexFilter,
   });
-  ErrorDetailsModel? errorDetailsModel;
+  ErrorDetailTotalModel? errorDetailsModel;
   int indexFilter;
   List<MachineStatusModel> machines = [];
 
+  List<ListCause> groupByCause(List<ErrorCauseSolutionModel> data) {
+    final Map<String, ListCause> causeMap = {};
+
+    for (var item in data) {
+      final cause = item.cause;
+      final solution = item.solution;
+      final count = item.usedCount;
+
+      if (causeMap.containsKey(cause)) {
+        final existing = causeMap[cause]!;
+        if (!existing.solutions!.contains(solution)) {
+          existing.solutions!.add(solution!);
+          existing.listCount!.add(count!);
+        }
+      } else {
+        causeMap[cause!] = ListCause(
+          cause: cause,
+          solutions: [solution!],
+          listCount: [count!],
+        );
+      }
+    }
+
+    return causeMap.values.toList();
+  }
+
   @override
   Widget build(BuildContext context) {
+    List<ListCause> listCause = groupByCause(errorDetailsModel?.data ?? []);
     return Container(
       // decoration: BoxDecoration(color: Color(0xff1b1c54)),
       child: Column(
@@ -55,9 +83,9 @@ class ErrorDetailWidget extends StatelessWidget {
             ],
           ),
           SizedBox(height: 32.h),
-          ...List.generate(errorDetailsModel?.listCause?.length ?? 0, (index) {
+          ...List.generate(listCause.length ?? 0, (index) {
             return DropDownButtonCause(
-              cause: errorDetailsModel!.listCause![index],
+              cause: listCause[index],
               indexFilter: indexFilter,
             );
           }),

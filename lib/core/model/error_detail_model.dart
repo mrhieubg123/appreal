@@ -56,11 +56,15 @@ class ListCause {
   int? countWeek;
   int? countMonth;
   List<ListSolution>? listSolution;
+  List<String>? solutions;
+  List<int>? listCount;
 
   ListCause({
     this.cause,
     this.idCause,
     this.listSolution,
+    this.solutions,
+    this.listCount,
     this.countWeek,
     this.countMonth,
   });

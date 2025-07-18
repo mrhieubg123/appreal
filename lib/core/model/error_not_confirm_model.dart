@@ -1,11 +1,9 @@
 class ListErrorNotConfirmModel {
-  int? count;
   List<ErrorNotConfirmModel>? data;
 
-  ListErrorNotConfirmModel({this.count, this.data});
+  ListErrorNotConfirmModel({this.data});
 
   ListErrorNotConfirmModel.fromJson(Map<String, dynamic> json) {
-    count = json['count'];
     if (json['data'] != null) {
       data = <ErrorNotConfirmModel>[];
       json['data'].forEach((v) {
@@ -16,7 +14,6 @@ class ListErrorNotConfirmModel {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['count'] = this.count;
     if (this.data != null) {
       data['data'] = this.data!.map((v) => v.toJson()).toList();
     }
@@ -28,6 +25,7 @@ class ErrorNotConfirmModel {
   String? eNDTIME;
   String? eRRORCODE;
   String? eRRORTYPE;
+  String? error_name;
   int? iD;
   String? lINE;
   String? lOCATION;
@@ -42,6 +40,7 @@ class ErrorNotConfirmModel {
       {this.eNDTIME,
         this.eRRORCODE,
         this.eRRORTYPE,
+        this.error_name,
         this.iD,
         this.lINE,
         this.lOCATION,
@@ -54,16 +53,17 @@ class ErrorNotConfirmModel {
 
   ErrorNotConfirmModel.fromJson(Map<String, dynamic> json) {
     eNDTIME = json['END_TIME'];
-    eRRORCODE = json['ERROR_CODE'];
-    eRRORTYPE = json['ERROR_TYPE'];
-    iD = json['ID'];
-    lINE = json['LINE'];
-    lOCATION = json['LOCATION'];
-    mACHINENAME = json['MACHINE_NAME'];
-    mACHINETYPE = json['MACHINE_TYPE'];
-    sTARTTIME = json['START_TIME'];
-    sTATUS = json['STATUS'];
-    tIME = json['TIME'];
+    eRRORCODE = json['error_code'];
+    eRRORTYPE = json['error_type'];
+    error_name = json['error_name'];
+    iD = json['id'];
+    lINE = json['line'];
+    lOCATION = json['location'];
+    mACHINENAME = json['machine_name'];
+    mACHINETYPE = json['machine_type'];
+    sTARTTIME = json['start_time'];
+    sTATUS = json['status'];
+    tIME = json['runtime_min'];
     idConfirm = json['id_confirm'];
   }
 

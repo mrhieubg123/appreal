@@ -4,37 +4,33 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:my_app/core/model/error_stats_model.dart';
 import 'package:my_app/core/model/machine_status_model.dart';
 import 'package:my_app/main.dart';
+import 'package:my_app/src/data_mau/constants.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../../core/interceptor/dio_client.dart';
+import '../../../core/model/dashboard_error_model.dart';
+import '../../../core/model/error_by_code_model.dart';
 import '../../../core/model/error_detail_model.dart';
+import '../../../core/model/error_detail_total_model.dart';
 import '../../../core/model/error_not_confirm_model.dart';
 import '../../../core/widget/dialog.dart';
 import '../../data_mau/data_mau.dart';
 
 class MachineStatusGetData {
   static String userId = "";
-  Dio dioPost = Dio(
-    BaseOptions(
-      baseUrl: dotenv.env['BASE_URL_RMS']!, // ⚠️ Đổi nếu cần
-      connectTimeout: Duration(seconds: 200),
-      receiveTimeout: Duration(seconds: 200),
-      headers: {
-        'Content-Type': 'application/json',
-        'Connection': 'close',
-        'Accept-Encoding': 'gzip, deflate, br',
-      },
-    ),
-  );
   Future getMachineStatus() async {
-    dynamic result;
-    final dio = Dio();
+    final dioPost = DioClient.instance;
 
     try {
-      final response = await dioPost.get("machines_status");
+      final response = await dioPost.get(Constants.urlMachineStatus);
       debugPrint(response.toString());
       if (response.statusCode == 200 && response.data != null) {
         return ListMachineStatusModel.fromJson(response.data);
       } else {
         throw Exception('Lỗi server: ${response.statusCode}');
       }
+    } on DioException catch (e) {
+      showDialogMessage(message: e.response?.data['error']);
+      return false;
     } catch (e) {
       throw Exception('Lỗi khi gọi API: $e');
     }
@@ -56,8 +52,11 @@ class MachineStatusGetData {
   }
 
   Future getListConfirm() async {
+    // return ListErrorNotConfirmModel.fromJson(getListConfirm_example);
+    final dioPost = DioClient.instance;
+
     try {
-      final response = await dioPost.get("data_confirm");
+      final response = await dioPost.get(Constants.urlGetListConfirm);
       debugPrint(response.toString());
       if (response.statusCode == 200 && response.data != null) {
         return ListErrorNotConfirmModel.fromJson(response.data);
@@ -70,9 +69,7 @@ class MachineStatusGetData {
   }
 
   Future getListErrorDetail({required String errorCode}) async {
-    dioPost.interceptors.add(
-      LogInterceptor(requestBody: true, responseBody: true, error: true),
-    );
+    final dioPost = DioClient.instance;
 
     try {
       final response = await dioPost.get(
@@ -90,7 +87,116 @@ class MachineStatusGetData {
     }
   }
 
+  Future getDashboardError({required body}) async {
+    // return DashboardErrorModel.fromJson(api_dashboard_error_example);
+
+    final dioPost = DioClient.instance;
+
+    try {
+      final response = await dioPost.post(
+        Constants.urlDashboardError,
+        data: body,
+      );
+      // debugPrint(response.toString());
+      if (response.statusCode == 200 && response.data != null) {
+        return DashboardErrorModel.fromJson(response.data);
+      }
+    } on DioException catch (e) {
+      showDialogMessage(message: e.response?.data['error']);
+      return false;
+    } catch (e) {
+      showDialogMessage(message: 'Lỗi khi gọi API: $e');
+    }
+  }
+
+  Future getErrorByCode({required body}) async {
+    // return ErrorDetailByCodeModel.fromJson(getErrorByCode_example);
+
+    final dioPost = DioClient.instance;
+
+    try {
+      final response = await dioPost.post(
+        Constants.urlErrorsByCode,
+        data: body,
+      );
+      // debugPrint(response.toString());
+      if (response.statusCode == 200 && response.data != null) {
+        return ErrorDetailByCodeModel.fromJson(response.data);
+      }
+    } on DioException catch (e) {
+      showDialogMessage(message: e.response?.data['error']);
+      return false;
+    } catch (e) {
+      showDialogMessage(message: 'Lỗi khi gọi API: $e');
+    }
+  }
+
+  Future getErrorDetail({required body}) async {
+    // return ErrorDetailTotalModel.fromJson(getErrorDetail_example);
+
+    final dioPost = DioClient.instance;
+
+    try {
+      final response = await dioPost.post(
+        Constants.urlGetErrorDetail,
+        data: body,
+      );
+      // debugPrint(response.toString());
+      if (response.statusCode == 200 && response.data != null) {
+        return ErrorDetailTotalModel.fromJson(response.data);
+      }
+    } on DioException catch (e) {
+      showDialogMessage(message: e.response?.data['error']);
+      return;
+    } catch (e) {
+      showDialogMessage(message: 'Lỗi khi gọi API: $e');
+    }
+  }
+
+  Future createConfirmError({required body}) async {
+    final dioPost = DioClient.instance;
+
+    try {
+      final response = await dioPost.post(
+        Constants.urlConfirmErrorDetail,
+        data: body,
+      );
+      // debugPrint(response.toString());
+      if (response.statusCode == 200 && response.data != null) {
+        showDialogMessage(message: response.data["message"]);
+        return true;
+      }
+    } on DioException catch (e) {
+      showDialogMessage(message: e.response?.data['error']);
+      return;
+    } catch (e) {
+      showDialogMessage(message: 'Lỗi khi gọi API: $e');
+    }
+  }
+
+  Future createCauseSolution({required body}) async {
+    final dioPost = DioClient.instance;
+
+    try {
+      final response = await dioPost.post(
+        Constants.urlAddError,
+        data: body,
+      );
+      // debugPrint(response.toString());
+      if (response.statusCode == 200 && response.data != null) {
+        return true;
+      }
+    } on DioException catch (e) {
+      showDialogMessage(message: e.response?.data['error']);
+      return;
+    } catch (e) {
+      showDialogMessage(message: 'Lỗi khi gọi API: $e');
+    }
+  }
+
   Future getErrorStatsModel({required String errorCode}) async {
+    final dioPost = DioClient.instance;
+
     try {
       final response = await dioPost.get(
         "error_stats",
@@ -115,6 +221,8 @@ class MachineStatusGetData {
     required String userId,
     required int idErrorConfirm,
   }) async {
+    final dioPost = DioClient.instance;
+
     try {
       final Map<String, dynamic> body = {
         "error_code": errorCode,
@@ -157,18 +265,22 @@ class MachineStatusGetData {
     return;
   }
 
-  Future<bool> registerUser(String cardId, String password) async {
-    final dio = Dio();
+  Future<bool> registerUser({
+    required String name,
+    required String cardId,
+    required String password,
+  }) async {
+    final dioPost = DioClient.instance;
 
     try {
       final response = await dioPost.post(
-        'register_user',
-        data: {'card_id': cardId, 'password': password},
+        Constants.urlRegister,
+        data: {"name": name, "password": password, "card_code": cardId},
       );
 
       if (response.statusCode == 201) {
         showDialogMessage(
-          message: '✅ Đăng ký thành công',
+          message: '✅ Tạo tài khoản thành công',
           onOk: () {
             Navigator.pop(navigatorKey.currentContext!);
           },
@@ -177,12 +289,7 @@ class MachineStatusGetData {
       }
       return false;
     } on DioException catch (e) {
-      final status = e.response?.statusCode;
-      if (status == 409) {
-        showDialogMessage(message: '⚠️ Người dùng đã tồn tại');
-      } else {
-        showDialogMessage(message: '❌ Lỗi không xác định: $status');
-      }
+      showDialogMessage(message: e.response?.data['error']);
       return false;
     } catch (e) {
       showDialogMessage(message: '❌ Dio Exception: $e');
@@ -191,30 +298,24 @@ class MachineStatusGetData {
   }
 
   Future<bool> loginUser(String cardId, String password) async {
-    // Đổi theo môi trường chạy
+    final dioPost = DioClient.instance;
 
     try {
       final response = await dioPost.post(
-        'login_user',
-        data: {'card_id': cardId, 'password': password},
+        Constants.urlLogin,
+        data: {'card_code': cardId, 'password': password},
       );
 
       if (response.statusCode == 200) {
         userId = cardId;
-
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('token', response.data['token']);
         print('✅ Đăng nhập thành công: $cardId');
         return true;
       }
       return false;
     } on DioException catch (e) {
-      final status = e.response?.statusCode;
-      if (status == 401) {
-        showDialogMessage(message: '❌ Mật khẩu sai');
-      } else if (status == 404) {
-        showDialogMessage(message: '❌ Không tìm thấy người dùng');
-      } else {
-        showDialogMessage(message: '❌ Lỗi Dio khác: $status - ${e.message}');
-      }
+      showDialogMessage(message: e.response?.data['error']);
       return false;
     } catch (e) {
       showDialogMessage(message: '❌ Lỗi không xác định: $e');
