@@ -62,20 +62,54 @@ class _DropDownButtonState extends State<DropDownButton> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
-                    child: Text(
-                      "${widget.errorNotConfirmModel.mACHINENAME} - ${widget.errorNotConfirmModel.eRRORTYPE} - ${widget.errorNotConfirmModel.tIME}",
-                      style: TextStyle(
-                        fontSize: 32.sp,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        infoRow(
+                          title: "Machine name",
+                          text: widget.errorNotConfirmModel.mACHINENAME,
+                        ),
+                        infoRow(
+                          title: "Line",
+                          text: widget.errorNotConfirmModel.lINE,
+                        ),
+                        infoRow(
+                          title: "Location",
+                          text: widget.errorNotConfirmModel.lOCATION,
+                        ),
+                        infoRow(
+                          title: "Error code",
+                          text: widget.errorNotConfirmModel.eRRORCODE,
+                          color: Colors.redAccent,
+                        ),
+                        infoRow(
+                          title: "Error name",
+                          text: widget.errorNotConfirmModel.eRRORTYPE,
+                          color: Colors.redAccent,
+                        ),
+                        infoRow(
+                          title: "Start time",
+                          text: widget.errorNotConfirmModel.sTARTTIME,
+                        ),
+                        infoRow(
+                          title: "End time",
+                          text: widget.errorNotConfirmModel.eNDTIME,
+                        ),
+                      ],
                     ),
                   ),
-                  Icon(
-                    isOpen
-                        ? Icons.keyboard_arrow_down
-                        : Icons.keyboard_arrow_up,
-                    size: 64.h,
+                  Container(
+                    padding: EdgeInsets.all(4.w),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.black, width: 4.w),
+                    ),
+                    child: Icon(
+                      isOpen
+                          ? Icons.keyboard_arrow_down
+                          : Icons.keyboard_arrow_up,
+                      size: 64.h,
+                    ),
                   ),
                 ],
               ),
@@ -87,10 +121,34 @@ class _DropDownButtonState extends State<DropDownButton> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // InkWell(
+                  //   onTap: onTapAddGiaiPhap,
+                  //   child: Container(
+                  //     margin: EdgeInsets.fromLTRB(0, 32.h, 0, 0),
+                  //     padding: EdgeInsets.symmetric(
+                  //       vertical: 12.h,
+                  //       horizontal: 16.w,
+                  //     ),
+                  //     decoration: BoxDecoration(
+                  //       color: Colors.white,
+                  //       border: Border.all(color: Colors.blueAccent),
+                  //       borderRadius: BorderRadius.circular(18.r),
+                  //     ),
+                  //     child: Text(
+                  //       "Thêm nguyên nhân, giải pháp +",
+                  //       style: TextStyle(
+                  //         fontSize: 30.sp,
+                  //         color: Colors.blueAccent,
+                  //         fontWeight: FontWeight.w500,
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
+                  // SizedBox(height: 16.h),
                   Text(
                     "Chọn nguyên nhân",
                     style: TextStyle(
-                      fontSize: 32.sp,
+                      fontSize: 40.sp,
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
@@ -114,7 +172,7 @@ class _DropDownButtonState extends State<DropDownButton> {
                             child: Text(
                               nguyenNhan?.cause ?? "--Chọn nguyên nhân--",
                               style: TextStyle(
-                                fontSize: 24.sp,
+                                fontSize: 36.sp,
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -134,7 +192,7 @@ class _DropDownButtonState extends State<DropDownButton> {
                   Text(
                     "Chọn giải pháp",
                     style: TextStyle(
-                      fontSize: 32.sp,
+                      fontSize: 40.sp,
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
@@ -158,7 +216,7 @@ class _DropDownButtonState extends State<DropDownButton> {
                             child: Text(
                               giaiPhap?.solution ?? "--Chọn giải pháp--",
                               style: TextStyle(
-                                fontSize: 24.sp,
+                                fontSize: 36.sp,
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -220,6 +278,31 @@ class _DropDownButtonState extends State<DropDownButton> {
     "Giai phap 4",
   ];
 
+  infoRow({title, text, color}) {
+    return RichText(
+      text: TextSpan(
+        children: [
+          TextSpan(
+            text: '$title:  ',
+            style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+              fontSize: 36.sp,
+            ),
+          ),
+          TextSpan(
+            text: text,
+            style: TextStyle(
+              color: color ?? Colors.blueAccent,
+              fontWeight: FontWeight.bold,
+              fontSize: 40.sp,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   onTapNguyenNhan(context) {
     showModalBottomSheet(
       backgroundColor: Colors.transparent,
@@ -246,7 +329,7 @@ class _DropDownButtonState extends State<DropDownButton> {
                     Text(
                       "Chọn nguyên nhân",
                       style: TextStyle(
-                        fontSize: 32.sp,
+                        fontSize: 40.sp,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -256,7 +339,7 @@ class _DropDownButtonState extends State<DropDownButton> {
                         "Đóng",
                         style: TextStyle(
                           color: Colors.blueAccent,
-                          fontSize: 24.sp,
+                          fontSize: 36.sp,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -328,7 +411,7 @@ class _DropDownButtonState extends State<DropDownButton> {
                     Text(
                       "Chọn giải pháp",
                       style: TextStyle(
-                        fontSize: 32.sp,
+                        fontSize: 40.sp,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -338,7 +421,7 @@ class _DropDownButtonState extends State<DropDownButton> {
                         "Đóng",
                         style: TextStyle(
                           color: Colors.blueAccent,
-                          fontSize: 24.sp,
+                          fontSize: 36.sp,
                           fontWeight: FontWeight.w500,
                         ),
                       ),

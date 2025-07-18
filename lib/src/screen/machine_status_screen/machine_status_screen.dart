@@ -82,13 +82,15 @@ class _MachineStatusAppState extends State<MachineStatusApp> {
       body: Column(
         children: [
           SizedBox(height: kToolbarHeight + 100.h),
-          Expanded(
+          buildStatusStatsWidget(),
+          Flexible(
             child: MachineStatusTable(
               lineNames: listLine,
               columnNames: listLocation,
               machines: listMachineStatusModel?.data ?? [],
             ),
           ),
+          Expanded(child: SizedBox()),
           InkWell(
             onTap: () => goToErrorTableScreen(context),
             child: Stack(
@@ -129,6 +131,175 @@ class _MachineStatusAppState extends State<MachineStatusApp> {
         ],
       ),
     );
+  }
+
+  buildStatusStatsWidget() {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 32.h, horizontal: 16.w),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Flexible(
+            flex: 1,
+            child: Column(
+              children: [
+                Container(
+                  height: 1.sw / 4 - 88.w,
+                  width: 1.sw / 4 - 88.w,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Color(0xFFA8E063), // xanh lá nhạt
+                        Color(0xFF56AB2F), // xanh lá đậm
+                      ],
+                    ),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(
+                    child: Text(
+                      getCountStatus("RUN").toString(),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 40.sp,
+                      ),
+                    ),
+                  ),
+                ),
+                Text(
+                  "RUN",
+                  style: TextStyle(
+                    color: Colors.green,
+                    fontSize: 40.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Flexible(
+            flex: 1,
+            child: Column(
+              children: [
+                Container(
+                  height: 1.sw / 4 - 88.w,
+                  width: 1.sw / 4 - 88.w,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                      colors: [
+                        Color(0xFFFF5F6D), // đỏ dâu
+                        Color(0xFF920E19), // cam sáng
+                      ],
+                    ),
+                  ),
+                  child: Center(
+                    child: Text(
+                      getCountStatus("ERROR").toString(),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 40.sp,
+                      ),
+                    ),
+                  ),
+                ),
+                Text(
+                  "ERROR",
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 40.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Flexible(
+            flex: 1,
+            child: Column(
+              children: [
+                Container(
+                  height: 1.sw / 4 - 88.w,
+                  width: 1.sw / 4 - 88.w,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                      colors: [
+                        Color(0xFFFFD200), // vàng tươi
+                        Color(0xFFF7971E), // cam đậm
+                      ],
+                    ),
+                  ),
+                  child: Center(
+                    child: Text(
+                      getCountStatus("OFF").toString(),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 40.sp,
+                      ),
+                    ),
+                  ),
+                ),
+                Text(
+                  "STOP",
+                  style: TextStyle(
+                    color: Colors.yellow,
+                    fontSize: 40.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Flexible(
+            flex: 1,
+            child: Column(
+              children: [
+                Container(
+                  height: 1.sw / 4 - 88.w,
+                  width: 1.sw / 4 - 88.w,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                      colors: [
+                        Color(0xFFBDC3C7), // xám bạc
+                        Color(0xFF2C3E50), // xám than
+                      ],
+                    ),
+                  ),
+                  child: Center(
+                    child: Text(
+                      getCountStatus(null).toString(),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 40.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+                Text(
+                  "N/A",
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 40.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  getCountStatus(status) {
+    return (listMachineStatusModel?.data ?? [])
+        .where((m) => m.status == status)
+        .length;
   }
 
   goToErrorTableScreen(context) {

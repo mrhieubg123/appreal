@@ -68,7 +68,7 @@ class MachineStatusTable extends StatelessWidget {
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
-              fontSize: 28.sp,
+              fontSize: 40.sp,
             ),
             textAlign: TextAlign.center,
           ),
@@ -84,7 +84,7 @@ class MachineStatusTable extends StatelessWidget {
                     child: Text(
                       (index + 1).toString(),
                       style: TextStyle(
-                        color: const Color.fromARGB(255, 231, 57, 57),
+                        color: Colors.blueAccent,
                         fontSize: 42.sp,
                         fontWeight: FontWeight.bold,
                       ),
@@ -138,9 +138,14 @@ class MachineStatusTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(color: Color(0xff1b1c54)),
+      padding: EdgeInsets.all(8.w),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.white,width: 4.w),
+        borderRadius: BorderRadius.circular(16.r),
+      ),
       child: SingleChildScrollView(
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             SizedBox(height: 32.h),
             buildStatusName(),
@@ -162,7 +167,7 @@ class MachineStatusTable extends StatelessWidget {
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 24.sp,
+                            fontSize: 36.sp,
                           ),
                         ),
                       ),
@@ -232,16 +237,18 @@ class MachineStatusTable extends StatelessWidget {
                       ),
                     ],
                   ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 8.w,
-                      vertical: 16.h,
+                  if (lineIndex != lineNames.length - 1)
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 8.w,
+                        vertical: 16.h,
+                      ),
+                      child: Divider(color: Colors.grey),
                     ),
-                    child: Divider(color: Colors.grey),
-                  ),
                 ],
               );
             }),
+            SizedBox(height: 32.h),
           ],
         ),
       ),
