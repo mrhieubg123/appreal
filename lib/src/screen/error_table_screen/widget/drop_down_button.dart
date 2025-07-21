@@ -305,8 +305,7 @@ class _DropDownButtonState extends State<DropDownButton> {
             text: '$title:  ',
             style: TextStyle(
               color: Colors.black,
-              fontWeight: FontWeight.bold,
-              fontSize: 36.sp,
+              fontSize: 30.sp,
             ),
           ),
           TextSpan(
@@ -314,7 +313,7 @@ class _DropDownButtonState extends State<DropDownButton> {
             style: TextStyle(
               color: color ?? Colors.blueAccent,
               fontWeight: FontWeight.bold,
-              fontSize: 40.sp,
+              fontSize: 32.sp,
             ),
           ),
         ],

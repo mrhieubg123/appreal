@@ -61,7 +61,7 @@ class _MachineDetailScreenState extends State<MachineDetailScreen> {
     listPercentError = dashboardErrorModel?.data
         ?.map((e) => (e.percentage ?? 0).round())
         .toList();
-    if (widget.machine.error_code != null) {
+    if (widget.machine.error_code != null && widget.machine.error_code != "") {
       errorDetailTotalModel = await MachineStatusGetData().getErrorDetail(
         body: {
           "line": widget.machine.line,
@@ -71,24 +71,6 @@ class _MachineDetailScreenState extends State<MachineDetailScreen> {
           "error_code": widget.machine.error_code,
         },
       );
-      // errorDetailsModel = await MachineStatusGetData().getListErrorDetail(
-      //   errorCode: widget.machine.error_code!,
-      // );
-      // errorStatsModel = await MachineStatusGetData().getErrorStatsModel(
-      //   errorCode: widget.machine.error_code!,
-      // );
-      // setState(() {
-      //   errorPercent =
-      //       ((errorStatsModel?.errorCodeErrorsLast7Days ?? 0) /
-      //               ((errorStatsModel?.totalErrorsLast7Days == null ||
-      //                       errorStatsModel?.totalErrorsLast7Days == 0)
-      //                   ? 1
-      //                   : errorStatsModel!.totalErrorsLast7Days!) *
-      //               100)
-      //           .round()
-      //           .toDouble();
-      //   otherPercent = 100 - errorPercent;
-      // });
     }
     setState(() {});
   }

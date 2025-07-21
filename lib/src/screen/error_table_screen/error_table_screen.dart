@@ -46,6 +46,7 @@ class _ErrorStableScreenState extends State<ErrorStableScreen> {
       ),
       body: Container(
         height: double.infinity,
+        width: double.infinity,
         decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/images/background.jpg'),

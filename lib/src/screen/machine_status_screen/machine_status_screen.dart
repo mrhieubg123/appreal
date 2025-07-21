@@ -60,7 +60,7 @@ class _MachineStatusAppState extends State<MachineStatusApp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xff1b1c54),
+      backgroundColor: const Color(0xff1d1d22),
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -79,57 +79,66 @@ class _MachineStatusAppState extends State<MachineStatusApp> {
         ),
         centerTitle: true,
       ),
-      body: Column(
-        children: [
-          SizedBox(height: kToolbarHeight + 100.h),
-          buildStatusStatsWidget(),
-          Flexible(
-            child: MachineStatusTable(
-              lineNames: listLine,
-              columnNames: listLocation,
-              machines: listMachineStatusModel?.data ?? [],
-            ),
+      body: Container(
+        height: double.infinity,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/background.jpg'),
+            fit: BoxFit.fill,
           ),
-          Expanded(child: SizedBox()),
-          InkWell(
-            onTap: () => goToErrorTableScreen(context),
-            child: Stack(
-              alignment: Alignment.topRight,
-              children: [
-                Container(
-                  margin: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 16.h),
-                  padding: EdgeInsets.symmetric(
-                    vertical: 24.h,
-                    horizontal: 32.w,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.blueAccent,
-                    borderRadius: BorderRadius.circular(32.r),
-                  ),
-                  child: Text(
-                    "Confirm",
-                    style: TextStyle(color: Colors.white, fontSize: 48.sp),
-                  ),
-                ),
-                if (listErrorNotConfirmModel?.data != null &&
-                    listErrorNotConfirmModel!.data!.isNotEmpty)
-                  Positioned(
-                    right: 0,
-                    top: 0,
-                    child: CircleAvatar(
-                      radius: 32.r,
-                      backgroundColor: Colors.red,
-                      child: Text(
-                        (listErrorNotConfirmModel?.data?.length ?? 0)
-                            .toString(),
-                        style: TextStyle(fontSize: 32.sp, color: Colors.white),
-                      ),
+        ),
+        child: Column(
+          children: [
+            SizedBox(height: kToolbarHeight + 100.h),
+            buildStatusStatsWidget(),
+            Flexible(
+              child: MachineStatusTable(
+                lineNames: listLine,
+                columnNames: listLocation,
+                machines: listMachineStatusModel?.data ?? [],
+              ),
+            ),
+            InkWell(
+              onTap: () => goToErrorTableScreen(context),
+              child: Stack(
+                alignment: Alignment.topRight,
+                children: [
+                  Container(
+                    margin: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 16.h),
+                    padding: EdgeInsets.symmetric(
+                      vertical: 24.h,
+                      horizontal: 32.w,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.blueAccent,
+                      borderRadius: BorderRadius.circular(32.r),
+                    ),
+                    child: Text(
+                      "Confirm",
+                      style: TextStyle(color: Colors.white, fontSize: 48.sp),
                     ),
                   ),
-              ],
+                  if (listErrorNotConfirmModel?.data != null &&
+                      listErrorNotConfirmModel!.data!.isNotEmpty)
+                    Positioned(
+                      right: 0,
+                      top: 0,
+                      child: CircleAvatar(
+                        radius: 32.r,
+                        backgroundColor: Colors.red,
+                        child: Text(
+                          (listErrorNotConfirmModel?.data?.length ?? 0)
+                              .toString(),
+                          style: TextStyle(fontSize: 32.sp, color: Colors.white),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -303,7 +312,7 @@ class _MachineStatusAppState extends State<MachineStatusApp> {
         .length;
   }
 
-  goToErrorTableScreen(context) {
+  goToErrorTableScreen(context) async {
     if (listErrorNotConfirmModel?.data == null ||
         listErrorNotConfirmModel!.data!.isEmpty) {
       showDialogMessage(message: "Không có lỗi nào cần xác nhận");
@@ -317,7 +326,9 @@ class _MachineStatusAppState extends State<MachineStatusApp> {
             listErrorNotConfirmModel: listErrorNotConfirmModel!,
           ),
         ),
-      );
+      ).then((v) {
+        initData();
+      });
     }
   }
 }

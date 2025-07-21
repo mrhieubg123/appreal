@@ -20,7 +20,7 @@ class MachineStatusTable extends StatelessWidget {
     "NA": Colors.grey,
   };
 
-  final int numberRows = 6;
+  final int numberRows = 7;
 
   List<MachineStatusModel> machines = [];
 
@@ -140,7 +140,8 @@ class MachineStatusTable extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(8.w),
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.white,width: 4.w),
+        color: Color(0xff1b1c54),
+        border: Border.all(color: Colors.white, width: 4.w),
         borderRadius: BorderRadius.circular(16.r),
       ),
       child: SingleChildScrollView(

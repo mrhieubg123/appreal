@@ -17,11 +17,45 @@ import '../../data_mau/data_mau.dart';
 
 class MachineStatusGetData {
   static String userId = "";
+
+  Future callApiThroughProxy({url, method, header, data}) async {
+    final dio = Dio()..interceptors.add(
+      LogInterceptor(requestBody: true, responseBody: true, error: true),
+    );
+    final dioPost = DioClient.instance;
+
+    final proxyUrl = 'https://10.255.42.71:5000/api/proxy-api';
+
+    final proxyRequestBody = {
+      "url": dioPost.options.baseUrl + url, // URL thật bạn muốn gọi
+      "method": method ?? "GET",
+      "data": data, // Có thể là {} hoặc dữ liệu cho POST
+      "headers": dioPost.options.headers,
+    };
+
+    try {
+      final response = await dio.post(
+        proxyUrl,
+        data: proxyRequestBody,
+        options: Options(headers: {"Content-Type": "application/json"}),
+      );
+      return response;
+      print("✅ Proxy response: ${response.data}");
+    } on DioException catch (e) {
+      return e.response;
+    } catch (e) {
+      print("❌ Lỗi khi gọi proxy: $e");
+    }
+  }
+
   Future getMachineStatus() async {
     final dioPost = DioClient.instance;
 
     try {
-      final response = await dioPost.get(Constants.urlMachineStatus);
+      // final response = await dioPost.get(Constants.urlMachineStatus);
+      final response = await callApiThroughProxy(
+        url: Constants.urlMachineStatus,
+      );
       debugPrint(response.toString());
       if (response.statusCode == 200 && response.data != null) {
         return ListMachineStatusModel.fromJson(response.data);
@@ -56,7 +90,10 @@ class MachineStatusGetData {
     final dioPost = DioClient.instance;
 
     try {
-      final response = await dioPost.get(Constants.urlGetListConfirm);
+      // final response = await dioPost.get(Constants.urlGetListConfirm);
+      final response = await callApiThroughProxy(
+        url: Constants.urlGetListConfirm,
+      );
       debugPrint(response.toString());
       if (response.statusCode == 200 && response.data != null) {
         return ListErrorNotConfirmModel.fromJson(response.data);
@@ -93,8 +130,13 @@ class MachineStatusGetData {
     final dioPost = DioClient.instance;
 
     try {
-      final response = await dioPost.post(
-        Constants.urlDashboardError,
+      // final response = await dioPost.post(
+      //   Constants.urlDashboardError,
+      //   data: body,
+      // );
+      final response = await callApiThroughProxy(
+        url: Constants.urlDashboardError,
+        method: "POST",
         data: body,
       );
       // debugPrint(response.toString());
@@ -115,8 +157,13 @@ class MachineStatusGetData {
     final dioPost = DioClient.instance;
 
     try {
-      final response = await dioPost.post(
-        Constants.urlErrorsByCode,
+      // final response = await dioPost.post(
+      //   Constants.urlErrorsByCode,
+      //   data: body,
+      // );
+      final response = await callApiThroughProxy(
+        url: Constants.urlErrorsByCode,
+        method: "POST",
         data: body,
       );
       // debugPrint(response.toString());
@@ -137,8 +184,13 @@ class MachineStatusGetData {
     final dioPost = DioClient.instance;
 
     try {
-      final response = await dioPost.post(
-        Constants.urlGetErrorDetail,
+      // final response = await dioPost.post(
+      //   Constants.urlGetErrorDetail,
+      //   data: body,
+      // );
+      final response = await callApiThroughProxy(
+        url: Constants.urlGetErrorDetail,
+        method: "POST",
         data: body,
       );
       // debugPrint(response.toString());
@@ -157,8 +209,13 @@ class MachineStatusGetData {
     final dioPost = DioClient.instance;
 
     try {
-      final response = await dioPost.post(
-        Constants.urlConfirmErrorDetail,
+      // final response = await dioPost.post(
+      //   Constants.urlConfirmErrorDetail,
+      //   data: body,
+      // );
+      final response = await callApiThroughProxy(
+        url: Constants.urlConfirmErrorDetail,
+        method: "POST",
         data: body,
       );
       // debugPrint(response.toString());
@@ -178,8 +235,10 @@ class MachineStatusGetData {
     final dioPost = DioClient.instance;
 
     try {
-      final response = await dioPost.post(
-        Constants.urlAddError,
+      // final response = await dioPost.post(Constants.urlAddError, data: body);
+      final response = await callApiThroughProxy(
+        url: Constants.urlAddError,
+        method: "POST",
         data: body,
       );
       // debugPrint(response.toString());
@@ -273,8 +332,13 @@ class MachineStatusGetData {
     final dioPost = DioClient.instance;
 
     try {
-      final response = await dioPost.post(
-        Constants.urlRegister,
+      // final response = await dioPost.post(
+      //   Constants.urlRegister,
+      //   data: {"name": name, "password": password, "card_code": cardId},
+      // );
+      final response = await callApiThroughProxy(
+        url: Constants.urlRegister,
+        method: "POST",
         data: {"name": name, "password": password, "card_code": cardId},
       );
 
@@ -301,8 +365,13 @@ class MachineStatusGetData {
     final dioPost = DioClient.instance;
 
     try {
-      final response = await dioPost.post(
-        Constants.urlLogin,
+      // final response = await dioPost.post(
+      //   Constants.urlLogin,
+      //   data: {'card_code': cardId, 'password': password},
+      // );
+      final response = await callApiThroughProxy(
+        url: Constants.urlLogin,
+        method: "POST",
         data: {'card_code': cardId, 'password': password},
       );
 
