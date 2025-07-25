@@ -1,4 +1,7 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:my_app/core/model/error_stats_model.dart';
@@ -18,34 +21,131 @@ import '../../data_mau/data_mau.dart';
 class MachineStatusGetData {
   static String userId = "";
 
-  Future callApiThroughProxy({url, method, header, data}) async {
-    final dio = Dio()..interceptors.add(
-      LogInterceptor(requestBody: true, responseBody: true, error: true),
+  Future testPushProxy({dataBody}) async {
+    var headers = {'Content-Type': 'application/json'};
+    var data = json.encode(
+      dataBody ??
+          {
+            "method": "POST",
+            "url": "http://10.225.42.70:5000/api/login",
+            "headers": {
+              "Accept-Encoding": "gzip, deflate, br",
+              "Content-Type": "application/json",
+            },
+            "data": {"card_code": "V3241419", "password": "123456"},
+          },
     );
+    var dio = Dio();
+    var response = await dio.request(
+      'https://10.225.42.71:5000/api/proxy-api',
+      options: Options(method: 'POST', headers: headers),
+      data: data,
+    );
+
+    if (response.statusCode == 200) {
+      return response;
+      showDialogMessage(message: json.encode(response.data));
+      print(json.encode(response.data));
+    } else {
+      showDialogMessage(message: response.statusMessage);
+      print(response.statusMessage);
+    }
+  }
+
+  Future<void> testConnectionWithDio({required String url, timeout = 5}) async {
+    final dio =
+        Dio(
+            BaseOptions(
+              baseUrl: timeout == 5
+                  ? "https://10.255.42.71:5000/api/proxy-api"
+                  : url,
+              connectTimeout: Duration(seconds: timeout),
+              receiveTimeout: Duration(seconds: timeout),
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept-Encoding': 'gzip, deflate, br',
+              },
+            ),
+          )
+          ..interceptors.add(
+            LogInterceptor(requestBody: true, responseBody: true, error: true),
+          );
+
+    // Bypass SSL nếu cần
+    (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
+      final client = HttpClient()
+        ..badCertificateCallback =
+            (X509Certificate cert, String host, int port) {
+              print('Bypassing SSL for $host');
+              return true;
+            };
+      return client;
+    };
+    final datatest = {
+      'url': 'http://10.225.42.70:5000/api/login',
+      'method': 'POST',
+      'data': {'card_code': 'V3241419', 'password': '123456'},
+      'headers': {
+        'Content-Type': 'application/json',
+        'Accept-Encoding': 'gzip, deflate, br',
+      },
+    };
+
+    try {
+      Response response;
+      if (timeout == 5) {
+        response = await dio.post('', data: datatest);
+        // response = await dio.post('/');
+      }
+      if (timeout == 6) {
+        response = await dio.post('/');
+      }
+      if (timeout == 7) {
+        await testPushProxy();
+        return;
+      } else {
+        response = await dio.get('/');
+      }
+      showDialogMessage(
+        message:
+            '✅ Kết nối $url thành công: ${response.statusCode} ${response.data}',
+      );
+    } on DioException catch (e) {
+      showDialogMessage(message: '❌ Lỗi $url : $e');
+    } catch (e) {
+      showDialogMessage(message: '❌ Kết nối $url thất bại: $e');
+    }
+  }
+
+  Future callApiThroughProxy({url, method, header, data}) async {
     final dioPost = DioClient.instance;
 
-    final proxyUrl = 'https://10.255.42.71:5000/api/proxy-api';
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    Map<String, dynamic> headers = {
+      "Accept-Encoding": "gzip, deflate, br",
+      "Content-Type": "application/json",
+    };
+    if (token != null) {
+      headers['Authorization'] = 'Bearer $token';
+    }
 
     final proxyRequestBody = {
       "url": dioPost.options.baseUrl + url, // URL thật bạn muốn gọi
       "method": method ?? "GET",
-      "data": data, // Có thể là {} hoặc dữ liệu cho POST
-      "headers": dioPost.options.headers,
+      "data": data ?? {}, // Có thể là {} hoặc dữ liệu cho POST
+      "headers": headers,
     };
 
     try {
-      final response = await dio.post(
-        proxyUrl,
-        data: proxyRequestBody,
-        options: Options(headers: {"Content-Type": "application/json"}),
-      );
+      final Response response = await testPushProxy(dataBody: proxyRequestBody);
       return response;
-      print("✅ Proxy response: ${response.data}");
     } on DioException catch (e) {
-      return e.response;
+      showDialogMessage(message: '❌ Lỗi proxy: $e');
     } catch (e) {
-      print("❌ Lỗi khi gọi proxy: $e");
+      showDialogMessage(message: "❌ Lỗi khi gọi proxy: $e");
     }
+    return;
   }
 
   Future getMachineStatus() async {
@@ -329,8 +429,6 @@ class MachineStatusGetData {
     required String cardId,
     required String password,
   }) async {
-    final dioPost = DioClient.instance;
-
     try {
       // final response = await dioPost.post(
       //   Constants.urlRegister,
@@ -342,7 +440,7 @@ class MachineStatusGetData {
         data: {"name": name, "password": password, "card_code": cardId},
       );
 
-      if (response.statusCode == 201) {
+      if (response != null) {
         showDialogMessage(
           message: '✅ Tạo tài khoản thành công',
           onOk: () {
@@ -362,8 +460,6 @@ class MachineStatusGetData {
   }
 
   Future<bool> loginUser(String cardId, String password) async {
-    final dioPost = DioClient.instance;
-
     try {
       // final response = await dioPost.post(
       //   Constants.urlLogin,
@@ -375,7 +471,7 @@ class MachineStatusGetData {
         data: {'card_code': cardId, 'password': password},
       );
 
-      if (response.statusCode == 200) {
+      if (response != null) {
         userId = cardId;
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('token', response.data['token']);

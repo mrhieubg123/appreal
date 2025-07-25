@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:my_app/src/screen/login_screen/login_screen.dart';
 
 import 'src/screen/machine_status_screen/machine_status_screen.dart';
@@ -5,7 +7,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+  }
+}
+
 void main() {
+  HttpOverrides.global = MyHttpOverrides();
   dotenv.load(fileName: "assets/config/.env");
   runApp(const MyApp());
 }

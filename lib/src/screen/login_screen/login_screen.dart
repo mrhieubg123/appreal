@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:my_app/core/widget/dialog.dart';
 import 'package:my_app/main.dart';
 import 'package:my_app/src/screen/machine_status_screen/machine_status_getdata.dart';
 
@@ -45,6 +46,18 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[200],
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () async {
+      //     List<String?>? result = await showTextInputDialog();
+      //     if (result != null) {
+      //       MachineStatusGetData().testConnectionWithDio(
+      //         url: result[0].toString(),
+      //         timeout: int.parse(result[1].toString()),
+      //       );
+      //     }
+      //   },
+      //   backgroundColor: Colors.blue,
+      // ),
       body: Center(
         child: Padding(
           padding: EdgeInsets.all(24.0),
