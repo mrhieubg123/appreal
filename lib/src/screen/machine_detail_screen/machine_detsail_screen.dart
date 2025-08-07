@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/model/dashboard_error_model.dart';
 import '../../../core/model/error_detail_model.dart';
@@ -8,6 +9,7 @@ import '../../../core/model/error_stats_model.dart';
 import '../../../core/model/machine_status_model.dart';
 import '../../data_mau/constants.dart';
 import '../machine_status_screen/machine_status_getdata.dart';
+import '../maintenance_information_screen/maintenance_information_screen.dart';
 import 'widget/error_detail_widget.dart';
 
 class MachineDetailScreen extends StatefulWidget {
@@ -28,6 +30,20 @@ class _MachineDetailScreenState extends State<MachineDetailScreen> {
   void initState() {
     getData();
     super.initState();
+    // 🔒 Khoá hướng dọc
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  }
+
+  @override
+  void dispose() {
+    // 🔓 Reset lại cho phép xoay mọi hướng (hoặc hướng bạn muốn)
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+
+    super.dispose();
   }
 
   List listStringRange = ["7day", "month"];
@@ -79,12 +95,12 @@ class _MachineDetailScreenState extends State<MachineDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Thông tin máy móc"),
+        title: const Text("Machine Information"),
         centerTitle: true,
         backgroundColor: Colors.blueAccent,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16.w),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -92,25 +108,48 @@ class _MachineDetailScreenState extends State<MachineDetailScreen> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (widget.machine.status == "ERROR") SizedBox(height: 16.h),
                 if (widget.machine.status == "ERROR")
-                  RichText(
-                    text: TextSpan(
-                      style: TextStyle(
-                        fontSize: 48.sp,
-                        fontWeight: FontWeight.bold,
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 16.h),
+                      RichText(
+                        text: TextSpan(
+                          style: TextStyle(
+                            fontSize: 48.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          children: [
+                            TextSpan(
+                              text: 'Mã lỗi : ',
+                              style: TextStyle(color: Colors.black),
+                            ),
+                            TextSpan(
+                              text: widget.machine.error_code,
+                              style: TextStyle(color: Colors.redAccent),
+                            ),
+                          ],
+                        ),
                       ),
-                      children: [
-                        TextSpan(
-                          text: 'Mã lỗi : ',
-                          style: TextStyle(color: Colors.black),
+                      RichText(
+                        text: TextSpan(
+                          style: TextStyle(
+                            fontSize: 48.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          children: [
+                            TextSpan(
+                              text: 'Tên lỗi : ',
+                              style: TextStyle(color: Colors.black),
+                            ),
+                            TextSpan(
+                              text: errorDetailsModel?.error,
+                              style: TextStyle(color: Colors.redAccent),
+                            ),
+                          ],
                         ),
-                        TextSpan(
-                          text: widget.machine.error_code,
-                          style: TextStyle(color: Colors.redAccent),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 SizedBox(height: 32.h),
                 selectFilter(),
@@ -174,6 +213,26 @@ class _MachineDetailScreenState extends State<MachineDetailScreen> {
         ),
         itemInfoWidget(title: "LINE", text: widget.machine.line ?? ""),
         itemInfoWidget(title: "LOCATION", text: widget.machine.location ?? ""),
+        InkWell(
+          onTap: () => goToInfoMaintenanceScreen(),
+          child: Stack(
+            // alignment: Alignment.bottomCenter,
+            children: [
+              Container(
+                margin: EdgeInsets.fromLTRB(0, 12.h, 12.w, 0),
+                padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 16.w),
+                decoration: BoxDecoration(
+                  color: Colors.blueAccent,
+                  borderRadius: BorderRadius.circular(16.r),
+                ),
+                child: Text(
+                  "Maintenance information",
+                  style: TextStyle(color: Colors.white, fontSize: 24.sp),
+                ),
+              ),
+            ],
+          ),
+        ),
         Container(
           margin: EdgeInsets.symmetric(vertical: 16.h),
           height: 400.h,
@@ -218,7 +277,8 @@ class _MachineDetailScreenState extends State<MachineDetailScreen> {
                   (index) => PieChartSectionData(
                     color: listColorError[index],
                     value: listPercentError![index].toDouble(),
-                    title: "${listPercentError![index]}%",
+                    title:
+                        "${listPercentError![index]}%\n(${dashboardErrorModel?.data![index].count})",
                     radius: 220.r,
                     titleStyle: TextStyle(
                       fontSize: 32.sp,
@@ -291,6 +351,16 @@ class _MachineDetailScreenState extends State<MachineDetailScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  goToInfoMaintenanceScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (BuildContext context) =>
+            MaintenanceInformationScreen(machine: widget.machine),
+      ),
     );
   }
 }

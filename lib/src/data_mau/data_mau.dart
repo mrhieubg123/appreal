@@ -4,91 +4,116 @@ dynamic api_machine_status = {
       "line": "GEN3",
       "location": "11",
       "machine_name": "Gap VI Automatically visual inspection Gap",
+      "machine_type": "Gap VI Automatically visual inspection Gap",
       "status": "RUN",
     },
     {
       "line": "GEN3",
       "location": "16",
       "machine_name": "A70 Final check Test RF-OTA & final check",
+      "machine_type": "Gap VI Automatically visual inspection Gap",
       "status": "ERROR",
+      "error_code": "E1004",
     },
     {
       "line": "GEN3",
       "location": "4",
       "machine_name": "A10-1 Check Wifi housing input into JIG",
+      "machine_type": "Gap VI Automatically visual inspection Gap",
       "status": "ERROR",
+      "error_code": "E1004",
     },
     {
       "line": "GEN3",
       "location": "8",
+      "machine_type": "Gap VI Automatically visual inspection Gap",
       "machine_name": "A40 Assembly Heat spreader to Rear housing",
       "status": "ERROR",
+      "error_code": "E1004",
     },
     {
       "line": "GEN2",
       "location": "1",
+      "machine_type": "Gap VI Automatically visual inspection Gap",
       "machine_name": "A40 Assembly Heat spreader to Rear housing",
       "status": "ERROR",
+      "error_code": "E1004",
     },
     {
       "line": "GEN1",
       "location": "2",
       "machine_name": "A40 Assembly Heat spreader to Rear housing",
+      "machine_type": "Gap VI Automatically visual inspection Gap",
       "status": "ERROR",
+      "error_code": "E1004",
     },
     {
       "line": "GEN1",
       "location": "7",
       "machine_name": "A40 Assembly Heat spreader to Rear housing",
+      "machine_type": "Gap VI Automatically visual inspection Gap",
       "status": "ERROR",
+      "error_code": "E1004",
     },
     {
       "line": "GEN1",
       "location": "8",
       "machine_name": "A40 Assembly Heat spreader to Rear housing",
-      "status": "RUN",
+      "machine_type": "Gap VI Automatically visual inspection Gap",
+      "status": null,
     },
     {
       "line": "GEN1",
       "location": "9",
       "machine_name": "A40 Assembly Heat spreader to Rear housing",
+      "machine_type": "Gap VI Automatically visual inspection Gap",
       "status": "RUN",
     },
     {
       "line": "GEN1",
       "location": "10",
       "machine_name": "A40 Assembly Heat spreader to Rear housing",
+      "machine_type": "Gap VI Automatically visual inspection Gap",
       "status": "ERROR",
+      "error_code": "E1004",
     },
     {
       "line": "GEN1",
       "location": "11",
       "machine_name": "A40 Assembly Heat spreader to Rear housing",
+      "machine_type": "Gap VI Automatically visual inspection Gap",
       "status": "ERROR",
+      "error_code": "E1004",
     },
     {
       "line": "GEN1",
       "location": "12",
       "machine_name": "A40 Assembly Heat spreader to Rear housing",
-      "status": "RUN",
+      "machine_type": "Gap VI Automatically visual inspection Gap",
+      "status": "OFF",
     },
     {
       "line": "GEN1",
       "location": "13",
+      "machine_type": "Gap VI Automatically visual inspection Gap",
       "machine_name": "A40 Assembly Heat spreader to Rear housing",
       "status": "ERROR",
     },
     {
       "line": "GEN1",
       "location": "1",
+      "machine_type": "Gap VI Automatically visual inspection Gap",
       "machine_name": "A40 Assembly Heat spreader to Rear housing",
       "status": "ERROR",
+      "error_code": "E1004",
     },
     {
       "line": "GEN4",
       "location": "1",
+      "machine_type": "Gap VI Automatically visual inspection Gap",
       "machine_name": "A40 Assembly Heat spreader to Rear housing",
       "status": "ERROR",
+      "error_code": "E1004",
     },
   ],
 };
@@ -188,4 +213,45 @@ dynamic getErrorByCode_example = {
     },
   ],
   "idconfirm": 14,
+};
+dynamic getViewMaintenance_monthly_example = {
+  "history": [
+    {
+      "action_taken": "Thay dầu và lọc dầu",
+      "content": "Kiểm tra dầu thủy lực",
+      "created_at": "2025-07-26 11:47:53.140000",
+      "maintainer": "Nguyễn Đức Hải",
+      "maintenance_type": "MONTHLY",
+      "no": 1,
+      "tech_spec": "Dầu thủy lực không đục, nhiệt độ ổn định"
+    },
+    {
+      "action_taken": "Thay dầu và lọc dầu",
+      "content": "Kiểm tra dầu thủy lực",
+      "created_at": "2025-07-26 11:09:17.427000",
+      "maintainer": "Nguyễn Đức Hải",
+      "maintenance_type": "MONTHLY",
+      "no": 2,
+      "tech_spec": "Dầu thủy lực không đục, nhiệt độ ổn định"
+    }
+  ],
+  "machine_info": {
+    "machine_name": "Gap VI Automatically visual inspecttion Gap"
+  }
+};
+dynamic getViewMaintenance_weekly_example = {
+  "history": [
+    {
+      "action_taken": "Thay đầu mạng",
+      "content": "Kiểm tra PLC",
+      "created_at": "2025-07-26 12:17:39.483000",
+      "maintainer": "Nguyễn Đức Hải",
+      "maintenance_type": "WEEKLY",
+      "no": 1,
+      "tech_spec": "Dây mạng oke, đầu mạng sắp hỏng "
+    }
+  ],
+  "machine_info": {
+    "machine_name": "Gap VI Automatically visual inspecttion Gap"
+  }
 };

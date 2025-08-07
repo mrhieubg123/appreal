@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:my_app/core/widget/dialog.dart';
 import 'package:my_app/main.dart';
 import 'package:my_app/src/screen/machine_status_screen/machine_status_getdata.dart';
-
 import '../machine_status_screen/machine_status_screen.dart';
 import 'register_screen.dart';
 
@@ -17,6 +17,15 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    // 🔒 Khoá hướng dọc
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
+  }
 
   void _handleLogin() async {
     String email = _emailController.text.trim();

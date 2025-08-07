@@ -16,4 +16,7 @@ class Constants {
   static String urlConfirmErrorDetail = "api/confirm_error_detail";
   static String urlGetErrorDetail = "api/get_error_detail";
   static String urlAddError = "api/add_error";
+  static String urlUploadErrorImage = "api/upload_error_image";
+  static String urlAddMaintenance = "api/add_maintenance";
+  static String urlViewMaintenance = "api/view_maintenance";
 }

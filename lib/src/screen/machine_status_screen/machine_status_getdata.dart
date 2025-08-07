@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:my_app/core/model/error_stats_model.dart';
 import 'package:my_app/core/model/machine_status_model.dart';
@@ -15,6 +16,7 @@ import '../../../core/model/error_by_code_model.dart';
 import '../../../core/model/error_detail_model.dart';
 import '../../../core/model/error_detail_total_model.dart';
 import '../../../core/model/error_not_confirm_model.dart';
+import '../../../core/model/view_maintennance_model.dart';
 import '../../../core/widget/dialog.dart';
 import '../../data_mau/data_mau.dart';
 
@@ -149,6 +151,9 @@ class MachineStatusGetData {
   }
 
   Future getMachineStatus() async {
+    if (kDebugMode) {
+      return ListMachineStatusModel.fromJson(api_machine_status);
+    }
     final dioPost = DioClient.instance;
 
     try {
@@ -186,7 +191,9 @@ class MachineStatusGetData {
   }
 
   Future getListConfirm() async {
-    // return ListErrorNotConfirmModel.fromJson(getListConfirm_example);
+    if (kDebugMode) {
+      return ListErrorNotConfirmModel.fromJson(getListConfirm_example);
+    }
     final dioPost = DioClient.instance;
 
     try {
@@ -225,7 +232,9 @@ class MachineStatusGetData {
   }
 
   Future getDashboardError({required body}) async {
-    // return DashboardErrorModel.fromJson(api_dashboard_error_example);
+    if (kDebugMode) {
+      return DashboardErrorModel.fromJson(api_dashboard_error_example);
+    }
 
     final dioPost = DioClient.instance;
 
@@ -252,7 +261,9 @@ class MachineStatusGetData {
   }
 
   Future getErrorByCode({required body}) async {
-    // return ErrorDetailByCodeModel.fromJson(getErrorByCode_example);
+    if (kDebugMode) {
+      return ErrorDetailByCodeModel.fromJson(getErrorByCode_example);
+    }
 
     final dioPost = DioClient.instance;
 
@@ -279,7 +290,9 @@ class MachineStatusGetData {
   }
 
   Future getErrorDetail({required body}) async {
-    // return ErrorDetailTotalModel.fromJson(getErrorDetail_example);
+    if (kDebugMode) {
+      return ErrorDetailTotalModel.fromJson(getErrorDetail_example);
+    }
 
     final dioPost = DioClient.instance;
 
@@ -296,6 +309,66 @@ class MachineStatusGetData {
       // debugPrint(response.toString());
       if (response.statusCode == 200 && response.data != null) {
         return ErrorDetailTotalModel.fromJson(response.data);
+      }
+    } on DioException catch (e) {
+      showDialogMessage(message: e.response?.data['error']);
+      return;
+    } catch (e) {
+      showDialogMessage(message: 'Lỗi khi gọi API: $e');
+    }
+  }
+
+  Future getViewMaintenance({required body}) async {
+    if (kDebugMode) {
+      if (body['maintenance_type'] == "WEEKLY") {
+        return ViewMaintenanceModel.fromJson(getViewMaintenance_weekly_example);
+      } else {
+        return ViewMaintenanceModel.fromJson(
+          getViewMaintenance_monthly_example,
+        );
+      }
+    }
+
+    final dioPost = DioClient.instance;
+
+    try {
+      // final response = await dioPost.post(
+      //   Constants.urlGetErrorDetail,
+      //   data: body,
+      // );
+      final response = await callApiThroughProxy(
+        url: Constants.urlViewMaintenance,
+        method: "POST",
+        data: body,
+      );
+      // debugPrint(response.toString());
+      if (response.statusCode == 200 && response.data != null) {
+        return ViewMaintenanceModel.fromJson(response.data);
+      }
+    } on DioException catch (e) {
+      showDialogMessage(message: e.response?.data['error']);
+      return;
+    } catch (e) {
+      showDialogMessage(message: 'Lỗi khi gọi API: $e');
+    }
+  }
+
+  Future getAddMaintenance({required body}) async {
+    final dioPost = DioClient.instance;
+
+    try {
+      // final response = await dioPost.post(
+      //   Constants.urlGetErrorDetail,
+      //   data: body,
+      // );
+      final response = await callApiThroughProxy(
+        url: Constants.urlAddMaintenance,
+        method: "POST",
+        data: body,
+      );
+      // debugPrint(response.toString());
+      if (response.statusCode == 200 && response.data != null) {
+        return true;
       }
     } on DioException catch (e) {
       showDialogMessage(message: e.response?.data['error']);
@@ -461,6 +534,7 @@ class MachineStatusGetData {
 
   Future<bool> loginUser(String cardId, String password) async {
     try {
+      if (kDebugMode) return true;
       // final response = await dioPost.post(
       //   Constants.urlLogin,
       //   data: {'card_code': cardId, 'password': password},

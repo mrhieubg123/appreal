@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../core/model/error_detail_model.dart';
@@ -21,6 +22,21 @@ class _ErrorStableScreenState extends State<ErrorStableScreen> {
   void initState() {
     listErrorNotConfirmModelState = widget.listErrorNotConfirmModel;
     super.initState();
+    // 🔒 Khoá hướng dọc
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
+  }
+
+  @override
+  void dispose() {
+    // 🔓 Reset lại cho phép xoay mọi hướng (hoặc hướng bạn muốn)
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+    super.dispose();
   }
 
   @override
