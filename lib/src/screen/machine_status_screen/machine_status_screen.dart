@@ -347,7 +347,7 @@ class _MachineStatusAppState extends State<MachineStatusApp> {
                   ),
                   child: Center(
                     child: Text(
-                      getCountStatus("OFF").toString(),
+                      getCountStatus("STOP").toString(),
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -385,7 +385,7 @@ class _MachineStatusAppState extends State<MachineStatusApp> {
                   ),
                   child: Center(
                     child: Text(
-                      getCountStatus(null).toString(),
+                      getCountStatus("OFF").toString(),
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 40.sp,
@@ -395,7 +395,7 @@ class _MachineStatusAppState extends State<MachineStatusApp> {
                   ),
                 ),
                 Text(
-                  "N/A",
+                  "OFF",
                   style: TextStyle(
                     color: Colors.grey,
                     fontSize: 40.sp,
@@ -429,7 +429,7 @@ class _MachineStatusAppState extends State<MachineStatusApp> {
             Color(0xFFFFD200), // vàng tươi
             Color(0xFFF7971E), // cam đậm
           ],
-          count: getCountStatus("OFF"),
+          count: getCountStatus("STOP"),
         ),
         Text(
           " Stop   ",
@@ -451,10 +451,10 @@ class _MachineStatusAppState extends State<MachineStatusApp> {
             Color(0xFFBDC3C7), // xám bạc
             Color(0xFF2C3E50), // xám than
           ],
-          count: getCountStatus(null),
+          count: getCountStatus("OFF"),
         ),
         Text(
-          " N/A   ",
+          " Off   ",
           style: TextStyle(color: Colors.white, fontSize: 24.sp),
         ),
       ],
@@ -477,7 +477,7 @@ class _MachineStatusAppState extends State<MachineStatusApp> {
 
   getCountStatus(status) {
     return (listMachineStatusModel?.data ?? [])
-        .where((m) => m.status == status)
+        .where((m) => m.status == status||(m.status==null&&status=="OFF"))
         .length;
   }
 

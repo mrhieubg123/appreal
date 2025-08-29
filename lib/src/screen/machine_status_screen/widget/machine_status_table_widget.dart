@@ -15,7 +15,8 @@ class MachineStatusTable extends StatelessWidget {
 
   final dynamic listColor = {
     "RUN": Colors.green,
-    "OFF": Colors.yellow,
+    "STOP": Colors.yellow,
+    "OFF": Colors.grey,
     "ERROR": Colors.red,
     "NA": Colors.grey,
   };
