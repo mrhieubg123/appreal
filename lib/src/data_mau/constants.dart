@@ -5,6 +5,7 @@ class Constants {
     "RUN": {"name": "Đang hoạt động", "color": Colors.green},
     "ERROR": {"name": "Đang lỗi", "color": Colors.red},
     "STOP": {"name": "Đang dừng", "color": Colors.yellow},
+    "CUT": {"name": "Đang dừng", "color": Colors.purple},
     "OFF": {"name": "Không tắt", "color": Colors.grey},
     "NA": {"name": "Không xác định", "color": Colors.grey},
   };

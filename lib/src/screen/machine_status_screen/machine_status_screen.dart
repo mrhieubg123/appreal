@@ -340,6 +340,44 @@ class _MachineStatusAppState extends State<MachineStatusApp> {
                     shape: BoxShape.circle,
                     gradient: LinearGradient(
                       colors: [
+                        Color(0xFFA548C7), // đỏ dâu
+                        Color(0xFF36085F), // cam sáng
+                      ],
+                    ),
+                  ),
+                  child: Center(
+                    child: Text(
+                      getCountStatus("CUT").toString(),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 40.sp,
+                      ),
+                    ),
+                  ),
+                ),
+                Text(
+                  "REST",
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 40.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Flexible(
+            flex: 1,
+            child: Column(
+              children: [
+                Container(
+                  height: 1.sw / 4 - 88.w,
+                  width: 1.sw / 4 - 88.w,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                      colors: [
                         Color(0xFFFFD200), // vàng tươi
                         Color(0xFFF7971E), // cam đậm
                       ],
@@ -493,6 +531,7 @@ class _MachineStatusAppState extends State<MachineStatusApp> {
         MaterialPageRoute(
           builder: (BuildContext context) => ErrorStableScreen(
             listErrorNotConfirmModel: listErrorNotConfirmModel!,
+            listLine: listLine,
           ),
         ),
       ).then((v) {

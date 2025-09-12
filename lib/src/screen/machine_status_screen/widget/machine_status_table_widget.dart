@@ -17,6 +17,7 @@ class MachineStatusTable extends StatelessWidget {
     "RUN": Colors.green,
     "STOP": Colors.yellow,
     "OFF": Colors.grey,
+    "CUT": Colors.purple,
     "ERROR": Colors.red,
     "NA": Colors.grey,
   };
@@ -118,6 +119,11 @@ class MachineStatusTable extends StatelessWidget {
             buildLight(color: Colors.yellow, radius: 16.r),
             Text(
               " Stop   ",
+              style: TextStyle(color: Colors.white, fontSize: 32.sp),
+            ),
+            buildLight(color: Colors.purple, radius: 16.r),
+            Text(
+              " Rest   ",
               style: TextStyle(color: Colors.white, fontSize: 32.sp),
             ),
             buildLight(color: Colors.red, radius: 16.r),

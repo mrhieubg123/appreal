@@ -49,15 +49,24 @@ class _MachineDetailScreenState extends State<MachineDetailScreen> {
   List listStringRange = ["7day", "month"];
   List listColorError = [
     Colors.red,
-    Colors.green,
-    Colors.yellow,
     Colors.blue,
+    Colors.green,
     Colors.orange,
-    Colors.grey,
-    Colors.black,
-    Colors.white,
+    Colors.purple,
     Colors.teal,
+    Colors.brown,
+    Colors.pink,
+    Colors.indigo,
+    Colors.cyan,
+    Colors.lime,
+    Colors.amber,
+    Colors.deepOrange,
     Colors.deepPurple,
+    Colors.lightBlue,
+    Colors.lightGreen,
+    Colors.yellow,
+    Colors.blueGrey,
+    Colors.black,
   ];
   List? listPercentError = [];
 
@@ -73,6 +82,9 @@ class _MachineDetailScreenState extends State<MachineDetailScreen> {
         "machine_name": widget.machine.machineName,
         "range": listStringRange[indexFilter],
       },
+    );
+    dashboardErrorModel?.data?.sort(
+          (a, b) => (b.count ?? 0).compareTo(a.count ?? 0),
     );
     listPercentError = dashboardErrorModel?.data
         ?.map((e) => (e.percentage ?? 0).round())
@@ -275,10 +287,10 @@ class _MachineDetailScreenState extends State<MachineDetailScreen> {
                 ...List.generate(
                   listPercentError?.length ?? 0,
                   (index) => PieChartSectionData(
-                    color: listColorError[index],
+                    color: listColorError[index % listColorError.length],
                     value: listPercentError![index].toDouble(),
-                    title:
-                        "${listPercentError![index]}%\n(${dashboardErrorModel?.data![index].count})",
+                    title:listPercentError![index].toDouble()>7 ?
+                        "${listPercentError![index]}%\n(${dashboardErrorModel?.data![index].count}m)":"",
                     radius: 220.r,
                     titleStyle: TextStyle(
                       fontSize: 32.sp,
@@ -299,7 +311,7 @@ class _MachineDetailScreenState extends State<MachineDetailScreen> {
               (index) => SizedBox(
                 width: 1.sw / 3 - 40.w,
                 child: IndicatorDot(
-                  color: listColorError[index],
+                  color: listColorError[index % listColorError.length],
                   label: "Lỗi ${dashboardErrorModel?.data?[index].errorCode}",
                 ),
               ),
