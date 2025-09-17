@@ -17,6 +17,7 @@ class MachineStatusTableLandscapeWidget extends StatelessWidget {
     "RUN": Colors.green,
     "STOP": Colors.yellow,
     "OFF": Colors.grey,
+    "CUT": Colors.purple,
     "ERROR": Colors.red,
     "NA": Colors.grey,
   };

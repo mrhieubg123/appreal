@@ -1,12 +1,13 @@
 dynamic api_machine_status = {
   "data": [
     {
-      "error_code": "",
+      "error_code": "E0001",
+      "error_type": "E0001",
       "line": "GEN3_1",
       "location": "9",
       "machine_name": "A50-1 Assembly front face",
       "machine_type": "XY Machine",
-      "status": "RUN",
+      "status": "ERROR",
     },
     {
       "error_code": "L2002",

@@ -475,6 +475,17 @@ class _MachineStatusAppState extends State<MachineStatusApp> {
         ),
         buildLight(
           colors: [
+            Color(0xFFA548C7), // đỏ dâu
+            Color(0xFF36085F), // cam đậm
+          ],
+          count: getCountStatus("CUT"),
+        ),
+        Text(
+          " Rest   ",
+          style: TextStyle(color: Colors.white, fontSize: 24.sp),
+        ),
+        buildLight(
+          colors: [
             Color(0xFFFF5F6D), // đỏ dâu
             Color(0xFF920E19), // cam sáng
           ],

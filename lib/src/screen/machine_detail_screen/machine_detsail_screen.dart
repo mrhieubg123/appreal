@@ -84,12 +84,12 @@ class _MachineDetailScreenState extends State<MachineDetailScreen> {
       },
     );
     dashboardErrorModel?.data?.sort(
-          (a, b) => (b.count ?? 0).compareTo(a.count ?? 0),
+      (a, b) => (b.count ?? 0).compareTo(a.count ?? 0),
     );
     listPercentError = dashboardErrorModel?.data
         ?.map((e) => (e.percentage ?? 0).round())
         .toList();
-    if (widget.machine.error_code != null && widget.machine.error_code != "") {
+    if (widget.machine.status == "ERROR") {
       errorDetailTotalModel = await MachineStatusGetData().getErrorDetail(
         body: {
           "line": widget.machine.line,
@@ -289,8 +289,9 @@ class _MachineDetailScreenState extends State<MachineDetailScreen> {
                   (index) => PieChartSectionData(
                     color: listColorError[index % listColorError.length],
                     value: listPercentError![index].toDouble(),
-                    title:listPercentError![index].toDouble()>7 ?
-                        "${listPercentError![index]}%\n(${dashboardErrorModel?.data![index].count}m)":"",
+                    title: listPercentError![index].toDouble() > 7
+                        ? "${listPercentError![index]}%\n(${dashboardErrorModel?.data![index].count}m)"
+                        : "",
                     radius: 220.r,
                     titleStyle: TextStyle(
                       fontSize: 32.sp,
